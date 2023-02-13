@@ -1,3 +1,4 @@
+<!--suppress CssUnusedSymbol -->
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
 import HelloWorld from "./components/HelloWorld.vue";
@@ -19,6 +20,7 @@ import HelloWorld from "./components/HelloWorld.vue";
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>
+        <RouterLink to="/markdown">Markdown</RouterLink>
       </nav>
     </div>
   </header>
