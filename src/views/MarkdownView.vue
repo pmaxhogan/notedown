@@ -1,9 +1,17 @@
 <script setup>
+import { ref, watchEffect } from "vue";
+
 const str = String.raw`
 # Markdown Test!
 \\(\text{M}\alpha\text{thjax Test}\\)
 `;
-const output = window.DOMPurify.sanitize(window.marked.parse(str));
+
+const output = ref("");
+
+watchEffect(() => {
+  console.log("watchEffect");
+  output.value = window.DOMPurify.sanitize(window.marked.parse(str));
+});
 
 // call mathjax typeset after the output is rendered
 window.requestAnimationFrame(() => {
