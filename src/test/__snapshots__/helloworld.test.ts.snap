@@ -1,0 +1,8 @@
+// Vitest Snapshot v1
+
+exports[`hello world component 1`] = `
+"<div data-v-e17ea971=\\"\\" class=\\"greetings\\">
+  <h1 data-v-e17ea971=\\"\\" class=\\"green\\">test msg</h1>
+  <h3 data-v-e17ea971=\\"\\"> You’ve successfully created a project with <a data-v-e17ea971=\\"\\" href=\\"https://vitejs.dev/\\" target=\\"_blank\\" rel=\\"noopener\\">Vite</a> + <a data-v-e17ea971=\\"\\" href=\\"https://vuejs.org/\\" target=\\"_blank\\" rel=\\"noopener\\">Vue 3</a>. </h3>
+</div>"
+`;
