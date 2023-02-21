@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from "vue";
+import Modal from "../components/Modal.vue";
+
 const str = String.raw`
 # Markdown Test!
 \\(\text{M}\alpha\text{thjax Test}\\)
@@ -9,10 +12,23 @@ const output = window.DOMPurify.sanitize(window.marked.parse(str));
 window.requestAnimationFrame(() => {
   window.MathJax.typeset();
 });
+
+// open or close dialog
+const isModalVisible = ref(false);
+function showModal() {
+  isModalVisible.value = true;
+}
+function closeModal() {
+  isModalVisible.value = false;
+}
 </script>
 
 <template>
   <div class="markdown">
     <div v-html="output"></div>
+    <div id="app">
+      <button type="button" class="btn" @click="showModal">Share</button>
+      <Modal v-show="isModalVisible" @close="closeModal" />
+    </div>
   </div>
 </template>
