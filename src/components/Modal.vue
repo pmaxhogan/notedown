@@ -1,11 +1,14 @@
 <!-- eslint-disable vue/multi-word-component-names -->
-<script setup>
-//code modified from https://www.digitalocean.com/community/tutorials/vuejs-vue-modal-component
 
-const emit = defineEmits(["close"]);
-// eslint-disable-next-line no-unused-vars
-const close = (_event) => {
-  emit("close");
+<script>
+//code modified from https://www.digitalocean.com/community/tutorials/vuejs-vue-modal-component
+export default {
+  name: "Modal",
+  methods: {
+    close() {
+      this.$emit("close");
+    },
+  },
 };
 </script>
 
@@ -45,8 +48,8 @@ const close = (_event) => {
 }
 
 .modal {
-  background: #A982C6;
-  box-shadow: 2px 2px 15px 1px #A982C6;
+  background: #a982c6;
+  box-shadow: 2px 2px 15px 1px #a982c6;
   overflow-x: auto;
   display: flex;
   flex-direction: column;
@@ -79,7 +82,7 @@ const close = (_event) => {
 
 .btn-close {
   position: absolute;
-  top:30%;
+  top: 30%;
   bottom: 30%;
   right: 4%;
   left: 88%;
@@ -87,14 +90,14 @@ const close = (_event) => {
   font-size: 15px;
   padding: 0px;
   cursor: pointer;
-  color: #FFF9FE;
+  color: #fff9fe;
   background: #322467;
   border: 1px solid #322467;
   border-radius: 50px;
 }
 
 .btn-copy {
-  color: #FFF9FE;
+  color: #fff9fe;
   background: #322467;
   border: 1px solid #322467;
   border-radius: 8px;
@@ -106,11 +109,9 @@ const close = (_event) => {
   font-weight: bold;
   padding: 5px;
   cursor: pointer;
-  color: #FFF9FE;
+  color: #fff9fe;
   background: #322467;
   border: 1px solid #322467;
   border-radius: 8px;
 }
 </style>
-
-
