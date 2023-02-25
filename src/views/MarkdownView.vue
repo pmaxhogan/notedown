@@ -1,4 +1,5 @@
 <script setup>
+import Button from "primevue/button";
 import { ref, watchEffect } from "vue";
 
 const str = String.raw`
@@ -17,10 +18,13 @@ watchEffect(() => {
 window.requestAnimationFrame(() => {
   window.MathJax.typeset();
 });
+
+const onClick = () => alert("click");
 </script>
 
 <template>
   <div class="markdown">
     <div v-html="output"></div>
+    <Button @click="onClick">Click me!</Button>
   </div>
 </template>
