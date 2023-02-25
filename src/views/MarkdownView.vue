@@ -34,7 +34,10 @@ function closeModal() {
     <div v-html="output"></div>
     <div id="app">
       <button type="button" class="btn" @click="showModal">Share</button>
-      <Modal v-show="isModalVisible" @close="closeModal" />
+      <Modal v-show="isModalVisible" @close="closeModal">
+        <template v-slot:header> Invite Others to View Your NoteDown </template>
+        <template v-slot:body></template>
+      </Modal>
     </div>
   </div>
 </template>

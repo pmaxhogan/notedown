@@ -1,13 +1,30 @@
 <!-- eslint-disable vue/multi-word-component-names -->
+<!--code modified from 
+  https://www.digitalocean.com/community/tutorials/vuejs-vue-modal-component
+https://visualbean.medium.com/how-to-copy-to-clipboard-with-vuejs-a1b7ffb1170e
+ -->
 
 <script>
-//code modified from https://www.digitalocean.com/community/tutorials/vuejs-vue-modal-component
 export default {
   name: "Modal",
+  data() {
+    return {
+      text: "goodbye cruel world sigh",
+    };
+  },
   methods: {
     close() {
       this.$emit("close");
     },
+    copy() {
+      this.$refs.clone.focus();
+      document.execCommand("copy");
+      alert("Copied!");
+    },
+    copy_display_close(){
+      this.copy();
+      this.close();
+    }
   },
 };
 </script>
@@ -16,19 +33,25 @@ export default {
   <div class="modal-backdrop">
     <div class="modal">
       <header class="modal-header">
-        <slot name="header"> Invite others to your NoteDown </slot>
+        <slot name="header"> </slot>
         <button type="button" class="btn-close" @click="close">x</button>
       </header>
 
       <section class="modal-body">
-        <slot name="body"> Display Link Here. Add Copy Functionality </slot>
+        <slot name="body"> </slot>
+        <div id="app">
+          <input
+            v-on:focus="$event.target.select()"
+            ref="clone"
+            readonly
+            :value="text"
+          />
+        </div>
       </section>
 
       <footer class="modal-footer">
         <slot name="footer"> </slot>
-        <button type="button" class="btn-copy" @click="close">
-          Should Copy Link
-        </button>
+        <button type="button" class="btn-copy" @click="copy_display_close">Copy</button>
       </footer>
     </div>
   </div>
