@@ -1,6 +1,4 @@
 <script setup>
-import Modal from "../components/Modal.vue";
-import Button from "primevue/button";
 import { ref, watchEffect } from "vue";
 
 const str = String.raw`
@@ -19,29 +17,52 @@ watchEffect(() => {
 window.requestAnimationFrame(() => {
   window.MathJax.typeset();
 });
+</script>
 
-// open or close dialog
-const isModalVisible = ref(false);
-function showModal() {
-  isModalVisible.value = true;
-}
-function closeModal() {
-  isModalVisible.value = false;
-}
+<script>
+import Button from "primevue/button";
+import Dialog from "primevue/dialog";
 
-const onClick = () => alert("click");
+export default {
+  data() {
+    return {
+      text: "Goodbye World",
+      display: false,
+    };
+  },
+  methods: {
+    copy() {
+      this.$refs.clone.focus();
+      document.execCommand("copy");
+    },
+    openDialog() {
+      this.display = !this.display;
+    },
+  },
+};
 </script>
 
 <template>
   <div class="markdown">
     <div v-html="output"></div>
-    <div id="app">
-      <button type="button" class="btn" @click="showModal">Share</button>
-      <Modal v-show="isModalVisible" @close="closeModal">
-        <template v-slot:header> Invite Others to View Your NoteDown </template>
-        <template v-slot:body></template>
-      </Modal>
-    </div>
-    <Button @click="onClick">Click me!</Button>
+    <Button @click="openDialog">Share</Button>
+    <Dialog position="center" v-model:visible="display">
+      <template #header>
+        <h3>Invite Others to View Your NoteDown</h3>
+      </template>
+      <input
+        v-on:focus="$event.target.select()"
+        ref="clone"
+        readonly
+        :value="text"
+      />
+      <template #footer>
+        <Button @click="copy" label="Share" icon="pi pi-link" autofocus />
+      </template>
+    </Dialog>
   </div>
 </template>
+
+<style lang="scss">
+//https://henryko.dev/2021/07/11/getting-started-with-primevue/#Customise_Primary_Colour_and_Font
+</style>
