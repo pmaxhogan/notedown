@@ -1,28 +1,16 @@
 <script setup>
-import { ref, watchEffect } from "vue";
+import { ref } from "vue";
+import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
+import Dialog from "primevue/dialog";
+import Button from "primevue/button";
 
-const str = String.raw`
+const str = ref(String.raw`
 # Markdown Test!
 \\(\text{M}\alpha\text{thjax Test}\\)
-`;
-
-const output = ref("");
-
-watchEffect(() => {
-  console.log("watchEffect");
-  output.value = window.DOMPurify.sanitize(window.marked.parse(str));
-});
-
-// call mathjax typeset after the output is rendered
-window.requestAnimationFrame(() => {
-  window.MathJax.typeset();
-});
+`.trim());
 </script>
 
 <script>
-import Button from "primevue/button";
-import Dialog from "primevue/dialog";
-
 export default {
   data() {
     return {
@@ -44,7 +32,9 @@ export default {
 
 <template>
   <div class="markdown">
-    <div v-html="output"></div>
+    <textarea v-model="str"></textarea>
+    <MarkdownRenderer :content="str"></MarkdownRenderer>
+
     <Button @click="openDialog">Share</Button>
     <Dialog position="center" v-model:visible="display">
       <template #header>
@@ -64,5 +54,8 @@ export default {
 </template>
 
 <style lang="scss">
-//https://henryko.dev/2021/07/11/getting-started-with-primevue/#Customise_Primary_Colour_and_Font
+textarea {
+  width: 100%;
+  height: 100px;
+}
 </style>
