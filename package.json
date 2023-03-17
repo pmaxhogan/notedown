@@ -16,6 +16,7 @@
     "dompurify": "^3.0.1",
     "marked": "^4.2.12",
     "pinia": "^2.0.28",
+    "primeflex": "^3.3.0",
     "primevue": "^3.23.0",
     "vue": "^3.2.45",
     "vue-router": "^4.1.6"

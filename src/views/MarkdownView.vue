@@ -3,18 +3,21 @@ import { ref } from "vue";
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import "@/assets/themes/mytheme/theme.scss";
 
-const str = ref(String.raw`
+const str = ref(
+  String.raw`
 # Markdown Test!
 \\(\text{M}\alpha\text{thjax Test}\\)
-`.trim());
+`.trim()
+);
 </script>
 
 <script>
 export default {
   data() {
     return {
-      text: "Goodbye World",
+      link: "Goodbye World",
       display: false,
     };
   },
@@ -40,12 +43,13 @@ export default {
       <template #header>
         <h3>Invite Others to View Your NoteDown</h3>
       </template>
-      <input
+      <textarea
+        class="linkdisplay"
         v-on:focus="$event.target.select()"
         ref="clone"
         readonly
-        :value="text"
-      />
+        :value="link"
+      ></textarea>
       <template #footer>
         <Button @click="copy" label="Copy" icon="pi pi-link" autofocus />
       </template>
@@ -57,5 +61,12 @@ export default {
 textarea {
   width: 100%;
   height: 100px;
+}
+.linkdisplay {
+  width: 100%;
+  height: 50px;
+  font-size: 12px;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #FFF9FE;
 }
 </style>
