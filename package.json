@@ -12,6 +12,8 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@types/marked": "^4.0.8",
+    "dompurify": "^3.0.1",
     "marked": "^4.2.12",
     "pinia": "^2.0.28",
     "primevue": "^3.23.0",
@@ -29,6 +31,7 @@
     "eslint-plugin-vue": "^9.3.0",
     "jsdom": "^21.1.0",
     "prettier": "^2.7.1",
+    "sass": "^1.58.3",
     "vite": "^4.0.0",
     "vitest": "^0.28.5"
   }

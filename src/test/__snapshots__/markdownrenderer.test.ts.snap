@@ -1,0 +1,15 @@
+// Vitest Snapshot v1
+
+exports[`markdown renderer component invalid 1`] = `
+"<div>
+  <p>$$\\\\notanescape$$</p>
+  <p>\`unclosed code block</p>
+</div>"
+`;
+
+exports[`markdown renderer component valid 1`] = `
+"<div>
+  <h1 id=\\"hello-markdown\\">Hello Markdown!</h1>
+  <p>$$\\\\frac\\\\alpha\\\\beta$$</p>
+</div>"
+`;
