@@ -57,7 +57,7 @@ export default {
         :value="text"
       />
       <template #footer>
-        <Button @click="copy" label="Share" icon="pi pi-link" autofocus />
+        <Button @click="copy" label="Copy" icon="pi pi-link" autofocus />
       </template>
     </Dialog>
   </div>
