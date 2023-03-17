@@ -19,15 +19,18 @@ export default {
     return {
       link: "Goodbye World",
       display: false,
+      copyConfirmed: false,
     };
   },
   methods: {
     copy() {
       this.$refs.clone.focus();
       document.execCommand("copy");
+      this.copyConfirmed = true;
     },
-    openDialog() {
+    toggleDialog() {
       this.display = !this.display;
+      this.copyConfirmed = false;
     },
   },
 };
@@ -37,11 +40,16 @@ export default {
   <div class="markdown">
     <textarea v-model="str"></textarea>
     <MarkdownRenderer :content="str"></MarkdownRenderer>
+    <Button
+      @click="toggleDialog"
+      label="Share"
+      icon="pi pi-external-link"
+    ></Button>
 
-    <Button @click="openDialog">Share</Button>
     <Dialog position="center" v-model:visible="display">
       <template #header>
-        <h3>Invite Others to View Your NoteDown</h3>
+        <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
+        <h3 v-else>Invite Others to View Your NoteDown</h3>
       </template>
       <textarea
         class="linkdisplay"
@@ -51,7 +59,18 @@ export default {
         :value="link"
       ></textarea>
       <template #footer>
-        <Button @click="copy" label="Copy" icon="pi pi-link" autofocus />
+        <Button
+          v-if="copyConfirmed"
+          @click="toggleDialog"
+          label="Close"
+          icon="pi pi-times"
+        ></Button>
+        <Button 
+          v-else 
+          @click="copy"
+          label="Copy"
+          icon="pi pi-link"
+        ></Button>
       </template>
     </Dialog>
   </div>
@@ -64,9 +83,11 @@ textarea {
 }
 .linkdisplay {
   width: 100%;
-  height: 50px;
-  font-size: 12px;
-  font-family: Arial, Helvetica, sans-serif;
-  background-color: #FFF9FE;
+  height: 25px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-family: Roboto, sans-serif;
+  background-color: #fff9fe;
+  border-color: #fff9fe;
 }
 </style>
