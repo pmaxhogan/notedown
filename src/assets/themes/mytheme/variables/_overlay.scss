@@ -12,15 +12,15 @@ $overlayContainerShadow: 0 0 14px 0 rgba(0, 0, 0, 0.1);
 
 /// Background of a dialog header
 /// @group overlay
-$dialogHeaderBg: #ffffff;
+$dialogHeaderBg: #A982C6;
 
 /// Border of a dialog header
 /// @group overlay
-$dialogHeaderBorder: 1px solid #dee2e6;
+$dialogHeaderBorder: 1px solid #A982C6;
 
 /// Text color of a dialog header
 /// @group overlay
-$dialogHeaderTextColor: $panelHeaderTextColor;
+$dialogHeaderTextColor: $primaryTextColor;
 
 /// Font weight of a dialog header
 /// @group overlay
@@ -40,7 +40,7 @@ $dialogContentPadding: 0 1.5rem;
 
 /// Border of a dialog footer
 /// @group overlay
-$dialogFooterBorder: 1px solid #dee2e6;
+$dialogFooterBorder: 1px solid #A982C6;
 
 /// Padding of a dialog footer
 /// @group overlay

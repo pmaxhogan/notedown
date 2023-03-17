@@ -16,7 +16,7 @@ $buttonBg: $primaryDarkerColor;
 
 /// Text color of a button
 /// @group button
-$buttonTextColor: $primaryTextColor;
+$buttonTextColor: $primaryLightText;
 
 /// Border of a button
 /// @group button
@@ -24,7 +24,7 @@ $buttonBorder: 1px solid $primaryDarkerColor;
 
 /// Background of a button in hover state
 /// @group button
-$buttonHoverBg: $primaryDarkColor;
+$buttonHoverBg: $primaryColor;
 
 /// Text color of a button in hover state
 /// @group button
@@ -40,7 +40,7 @@ $buttonActiveBg: $primaryColor;
 
 /// Color of a button in pressed state
 /// @group button
-$buttonTextActiveColor: $primaryBackgroundText;
+$buttonTextActiveColor: $primaryTextColor;
 
 /// Border color of a button in pressed state
 /// @group button
@@ -80,43 +80,43 @@ $plainButtonActiveBgColor:#dee2e6;
 
 /// Background of a secondary button
 /// @group button
-$secondaryButtonBg: #607D8B;
+$secondaryButtonBg: $primaryDarkColor;
 
 /// Text color of a secondary button
 /// @group button
-$secondaryButtonTextColor: #ffffff;
+$secondaryButtonTextColor: $primaryLightText;
 
 /// Border of a secondary button
 /// @group button
-$secondaryButtonBorder: 1px solid #607D8B;
+$secondaryButtonBorder: 1px solid $primaryDarkColor;
 
 /// Background of a secondary button in hover state
 /// @group button
-$secondaryButtonHoverBg: #546E7A;
+$secondaryButtonHoverBg: $primaryColor;
 
 /// Text color of a secondary button in hover state
 /// @group button
-$secondaryButtonTextHoverColor: #ffffff;
+$secondaryButtonTextHoverColor: $primaryTextColor;
 
 /// Border color of a secondary button in hover state
 /// @group button
-$secondaryButtonHoverBorderColor: #546E7A;
+$secondaryButtonHoverBorderColor: $primaryColor;
 
 /// Background of a secondary button in pressed state
 /// @group button
-$secondaryButtonActiveBg: #455A64;
+$secondaryButtonActiveBg: $primaryColor;
 
 /// Text color of a secondary button in pressed state
 /// @group button
-$secondaryButtonTextActiveColor: #ffffff;
+$secondaryButtonTextActiveColor: $primaryTextColor;
 
 /// Border color of a secondary button in pressed state
 /// @group button
-$secondaryButtonActiveBorderColor: #455A64;
+$secondaryButtonActiveBorderColor: $primaryDarkColor;
 
 /// Box shadow of a secondary button in focused state
 /// @group button
-$secondaryButtonFocusShadow: 0 0 0 0.2rem #B0BEC5;
+$secondaryButtonFocusShadow: 0 0 0 0.2rem $primaryColor;
 
 /// Background of an info button
 /// @group button
