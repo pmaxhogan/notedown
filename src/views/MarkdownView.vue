@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
+import EditableDocument from "@/components/EditableDocument.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import "@/assets/themes/mytheme/theme.scss";
@@ -20,7 +21,23 @@ export default {
       link: "Goodbye World",
       display: false,
       copyConfirmed: false,
+      showEditableDocument: false,
+      savedDocuments: [],
+      newDocumentName: "",
+      savedFolders: [
+        {
+          name: "Default",
+          documents: [],
+        },
+        {
+          name: "Trash",
+          documents: [],
+        },
+      ],
     };
+  },
+  components: {
+    EditableDocument,
   },
   methods: {
     copy() {
@@ -31,6 +48,42 @@ export default {
     toggleDialog() {
       this.display = !this.display;
       this.copyConfirmed = false;
+    },
+    toggleEditableDocument() {
+      this.showEditableDocument = !this.showEditableDocument;
+    },
+    saveDocument() {
+      if (this.newDocumentName) {
+        this.savedDocuments.push({
+          name: this.newDocumentName,
+          content: this.str.value,
+        });
+        this.newDocumentName = "";
+        this.showEditableDocument = false;
+      } else {
+        alert("Please enter a document name:");
+      }
+    },
+    loadDocument(index) {
+      this.str.value = this.savedDocuments[index].content;
+    },
+    createFolder(folderName) {
+      this.savedFolders.push({ name: folderName, documents: [] });
+    },
+    addDocumentToFolder(folderName, document) {
+      const folder = this.savedFolders.find((f) => f.name === folderName);
+      if (folder) {
+        folder.documents.push(document);
+      } else {
+        console.error("Folder not found:", folderName);
+      }
+    },
+    getDocumentsInFolder(folderName) {
+      const folder = this.savedFolders.find((f) => f.name === folderName);
+      return folder ? folder.documents : [];
+    },
+    isValidDocumentName(name) {
+      return /^[a-zA-Z0-9]/.test(name);
     },
   },
 };
@@ -65,14 +118,52 @@ export default {
           label="Close"
           icon="pi pi-times"
         ></Button>
-        <Button 
-          v-else 
-          @click="copy"
-          label="Copy"
-          icon="pi pi-link"
-        ></Button>
+        <Button v-else @click="copy" label="Copy" icon="pi pi-link"></Button>
       </template>
     </Dialog>
+    <button @click="toggleEditableDocument">Create/Edit Document</button>
+    <div v-if="showEditableDocument">
+      <input
+        type="text"
+        v-model="newDocumentName"
+        placeholder="Document name"
+      />
+      <button @click="saveDocument">Save Document</button>
+      <EditableDocument :content="str" @update="onDocumentUpdate" />
+      <select v-model="selectedFolder">
+        <option
+          v-for="(folder, index) in savedFolders"
+          :key="index"
+          :value="folder.name"
+        >
+          {{ folder.name }}
+        </option>
+      </select>
+      <button
+        @click="
+          addDocumentToFolder(selectedFolder, {
+            name: newDocumentName,
+            content: str.value,
+          })
+        "
+      >
+        Add to Folder
+      </button>
+    </div>
+
+    <h2>Folders</h2>
+    <ul>
+      <li v-for="(folder, index) in savedFolders" :key="index">
+        {{ folder.name }}
+      </li>
+    </ul>
+
+    <h2>Saved Documents</h2>
+    <ul>
+      <li v-for="(document, index) in savedDocuments" :key="index">
+        <a href="#" @click.prevent="loadDocument(index)">{{ document.name }}</a>
+      </li>
+    </ul>
   </div>
 </template>
 
