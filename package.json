@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "frontend": "vite",
+    "start": "vite",
     "backend": "firebase serve --only functions",
     "build": "vite build",
     "preview": "vite preview",
