@@ -4,6 +4,7 @@ import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
 import EditableDocument from "@/components/EditableDocument.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import SplitButton from "primevue/splitbutton";
 import "@/assets/themes/mytheme/theme.scss";
 
 const str = ref(
@@ -93,12 +94,73 @@ export default {
   <div class="markdown">
     <textarea v-model="str"></textarea>
     <MarkdownRenderer :content="str"></MarkdownRenderer>
+
+    <div class="position-sticky mx-auto my-auto">
+      <span class="p-buttonset">
+        <Button
+          class="mr-8"
+          @click="toggleEditableDocument"
+          label="Create/Edit Document"
+          icon="pi pi-file"
+        ></Button>
+        <Button
+          @click="saveDocument"
+          label="Save Document"
+          icon="pi pi-save"
+        ></Button>
+        <SplitButton
+          @click="
+            addDocumentToFolder(selectedFolder, {
+              name: newDocumentName,
+              content: str.value,
+            })
+          "
+          label="Add to Folder"
+          icon="pi pi-folder-open"
+          :model="savedFolders"
+        ></SplitButton>
+      </span>
+    </div>
+
+    <div v-if="showEditableDocument">
+      <textarea
+        type="text"
+        v-model="newDocumentName"
+        placeholder="Document name"
+      ></textarea>
+      <EditableDocument :content="str" @update="onDocumentUpdate" />
+      <select v-model="selectedFolder">
+        <option
+          v-for="(folder, index) in savedFolders"
+          :key="index"
+          :value="folder.name"
+        >
+          {{ folder.name }}
+        </option>
+      </select>
+    </div>
+
+    <h2>Folders</h2>
+    <ul>
+      <li v-for="(folder, index) in savedFolders" :key="index">
+        {{ folder.name }}
+      </li>
+    </ul>
+
+    <h2>Saved Documents</h2>
+    <ul>
+      <li v-for="(document, index) in savedDocuments" :key="index">
+        <a href="#" @click.prevent="loadDocument(index)">{{ document.name }}</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="position-sticky bottom-0 end-0">
     <Button
       @click="toggleDialog"
       label="Share"
       icon="pi pi-external-link"
     ></Button>
-
     <Dialog position="center" v-model:visible="display">
       <template #header>
         <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
@@ -121,49 +183,6 @@ export default {
         <Button v-else @click="copy" label="Copy" icon="pi pi-link"></Button>
       </template>
     </Dialog>
-    <button @click="toggleEditableDocument">Create/Edit Document</button>
-    <div v-if="showEditableDocument">
-      <input
-        type="text"
-        v-model="newDocumentName"
-        placeholder="Document name"
-      />
-      <button @click="saveDocument">Save Document</button>
-      <EditableDocument :content="str" @update="onDocumentUpdate" />
-      <select v-model="selectedFolder">
-        <option
-          v-for="(folder, index) in savedFolders"
-          :key="index"
-          :value="folder.name"
-        >
-          {{ folder.name }}
-        </option>
-      </select>
-      <button
-        @click="
-          addDocumentToFolder(selectedFolder, {
-            name: newDocumentName,
-            content: str.value,
-          })
-        "
-      >
-        Add to Folder
-      </button>
-    </div>
-
-    <h2>Folders</h2>
-    <ul>
-      <li v-for="(folder, index) in savedFolders" :key="index">
-        {{ folder.name }}
-      </li>
-    </ul>
-
-    <h2>Saved Documents</h2>
-    <ul>
-      <li v-for="(document, index) in savedDocuments" :key="index">
-        <a href="#" @click.prevent="loadDocument(index)">{{ document.name }}</a>
-      </li>
-    </ul>
   </div>
 </template>
 
@@ -171,13 +190,14 @@ export default {
 textarea {
   width: 100%;
   height: 100px;
+  background-color: #fff9fe;
+  border-color: #fff9fe;
 }
 .linkdisplay {
   width: 100%;
   height: 25px;
   border-radius: 5px;
   font-size: 16px;
-  font-family: Roboto, sans-serif;
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
