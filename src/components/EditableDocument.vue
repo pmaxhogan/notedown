@@ -59,5 +59,8 @@ export default {
   overflow: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
+  background-color: #FFF9FE;
+  border-color: #FFF9FE;
+  color: #000000;
 }
 </style>
