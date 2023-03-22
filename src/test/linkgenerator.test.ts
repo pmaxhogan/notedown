@@ -9,35 +9,29 @@ const exceptionString = "https://notedown-web.web.app/#markdown\\"; //#, \ are a
 test("link generator component valid", async () => {
   expect(LinkGenerator).toBeTruthy();
 
-  const wrapper = mount(LinkGenerator, {
-    props: {
-      content: validString,
-    },
-  });
+  const wrapper = mount(LinkGenerator);
 
-  expect(wrapper.emitted()).toBeTruthy();
+  expect(wrapper.emitted().shareableLink[0].toString()).toEqual(validString);
 });
 
 test("link generator component invalid", async () => {
   expect(LinkGenerator).toBeTruthy();
 
-  const wrapper = mount(LinkGenerator, {
-    props: {
-      content: invalidString,
-    },
-  });
-
-  expect(wrapper.emitted()).toBeTruthy();
+  const wrapper = mount(LinkGenerator);
+  
+  expect(wrapper.emitted().shareableLink[0].toString()).not.toEqual(invalidString);
 });
 
-test("link generator component exception", async () => {
+test("link generator component exception encountered", async () => {
   expect(LinkGenerator).toBeTruthy();
 
-  const wrapper = mount(LinkGenerator, {
-    props: {
-      content: exceptionString,
-    },
-  });
-
-  expect(wrapper.emitted()).toBeTruthy();
+  const wrapper = mount(LinkGenerator);
+  
+  expect(wrapper.emitted().shareableLink[0].toString()).not.toEqual(exceptionString);
 });
+
+/*references:
+https://test-utils.vuejs.org/guide/essentials/event-handling.html#asserting-the-emitted-events
+https://v1.test-utils.vuejs.org/api/wrapper/emitted.html
+https://test-utils.vuejs.org/guide/advanced/vue-router.html#using-a-mocked-router
+*/
