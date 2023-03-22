@@ -2,7 +2,7 @@
 
 <template>
   <header>
-    <p>Welcome to NoteDown</p>
+    <h3>Welcome to NoteDown</h3>
     <nav>
       <ul>
         <li><RouterLink to="/">Home</RouterLink></li>
@@ -22,14 +22,15 @@ header {
   line-height: 1.5;
   max-height: 100vh;
 
-  p {
+  h3 {
     margin-left: 1rem;
+    text-align: start;
   }
 }
 
 nav {
   margin-left: auto;
-  text-align: center;
+  text-align: end;
   font-size: 14px;
 
   ul {
