@@ -8,6 +8,7 @@
         <li><RouterLink to="/">Home</RouterLink></li>
         <li><RouterLink to="/about">About</RouterLink></li>
         <li><RouterLink to="/markdown">Markdown</RouterLink></li>
+        <li><RouterLink to="/login">Login</RouterLink></li>
       </ul>
     </nav>
   </header>
