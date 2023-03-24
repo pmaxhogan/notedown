@@ -2,6 +2,7 @@
 import { ref } from "vue";
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
 import EditableDocument from "@/components/EditableDocument.vue";
+import LinkGenerator from "@/components/LinkGenerator.vue";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
@@ -19,7 +20,7 @@ const str = ref(
 export default {
   data() {
     return {
-      link: "Goodbye World",
+      link: "",
       display: false,
       copyConfirmed: false,
       showEditableDocument: false,
@@ -39,12 +40,16 @@ export default {
   },
   components: {
     EditableDocument,
+    LinkGenerator,
   },
   methods: {
     copy() {
       this.$refs.clone.focus();
       document.execCommand("copy");
       this.copyConfirmed = true;
+    },
+    captureLink(sl) {
+      this.link = sl;
     },
     toggleDialog() {
       this.display = !this.display;
@@ -161,12 +166,16 @@ export default {
       label="Share"
       icon="pi pi-external-link"
     ></Button>
+
+    <LinkGenerator @shareableLink="captureLink" />
+
     <Dialog position="center" v-model:visible="display">
       <template #header>
         <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
         <h3 v-else>Invite Others to View Your NoteDown</h3>
       </template>
       <textarea
+        v-if="!copyConfirmed"
         class="linkdisplay"
         v-on:focus="$event.target.select()"
         ref="clone"
@@ -202,3 +211,5 @@ textarea {
   border-color: #fff9fe;
 }
 </style>
+
+
