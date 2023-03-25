@@ -23,8 +23,8 @@ test("handles focus and blur events", async () => {
   const editableArea = wrapper.find(".editable-area");
 
   await editableArea.trigger("focus");
-  expect(editableArea.element.getAttribute("is-focused")).toBe("true");
+  expect(wrapper.vm.isFocused).toBe(true);
 
   await editableArea.trigger("blur");
-  expect(editableArea.element.getAttribute("is-focused")).toBe("false");
+  expect(wrapper.vm.isFocused).toBe(false);
 });

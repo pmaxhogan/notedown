@@ -1,6 +1,9 @@
-# notedown
+# Notedown
+## How to run tests
+1. Install Node.js and NPM
+2. `npm install`
+3. `npm run test`
 
-This template should help get you started developing with Vue 3 in Vite.
 
 ## Recommended IDE Setup
 
