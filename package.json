@@ -13,15 +13,21 @@
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.0.0",
     "@types/marked": "^4.0.8",
+    "@vuelidate/core": "^2.0.1",
+    "@vuelidate/validators": "^2.0.1",
     "dompurify": "^3.0.1",
     "firebase": "^9.18.0",
     "marked": "^4.2.12",
     "pinia": "^2.0.28",
     "primeflex": "^3.3.0",
     "primevue": "^3.23.0",
+    "react-hook-form": "^7.43.8",
+    "vee-validate": "^4.8.4",
     "vue": "^3.2.47",
-    "vue-router": "^4.1.6"
+    "vue-router": "^4.1.6",
+    "yup": "^1.0.2"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
