@@ -1,16 +1,24 @@
 <script setup>
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
-import { ref } from "vue";
-import CreateFile from "@/components/CreateFile.vue";
+import { defineEmits, ref, watchEffect } from "vue";
 
-const contentToRender = ref(String.raw``.trim());
+const emit = defineEmits(["html", "text", "name"]);
+
+const contentToRender = ref(
+  String.raw`
+# Markdown Test!
+\\(\text{M}\alpha\text{thjax Test}\\)
+`.trim()
+);
 const documentName = ref("");
+
+watchEffect(() => {
+  emit("text", contentToRender.value);
+  emit("name", documentName.value);
+});
+
 const props = defineProps({
   renderText: {
-    type: Boolean,
-    required: true,
-  },
-  downloadConfirm: {
     type: Boolean,
     required: true,
   },
@@ -23,7 +31,7 @@ const props = defineProps({
       class="edit-filename"
       type="text"
       placeholder="Enter Document Name"
-      required="true"
+      required="required"
       v-model="documentName"
     ></textarea>
 
@@ -35,15 +43,10 @@ const props = defineProps({
     ></textarea>
 
     <MarkdownRenderer
-      v-if="props.renderText"
+      v-show="props.renderText"
       :content="contentToRender"
+      @html="emit('html', $event)"
     ></MarkdownRenderer>
-
-    <CreateFile
-      :docname="documentName"
-      :textToSave="contentToRender"
-      :startDownload="downloadConfirm"
-    ></CreateFile>
   </div>
 </template>
 

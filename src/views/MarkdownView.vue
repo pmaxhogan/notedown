@@ -1,21 +1,24 @@
 <script setup>
 import { ref } from "vue";
-import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
-import EditableDocument from "@/components/EditableDocument.vue";
-import LinkGenerator from "@/components/LinkGenerator.vue";
+import download from "@/lib/download.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import "@/assets/themes/mytheme/theme.scss";
 
-const str = ref(
-  String.raw`
-# Markdown Test!
-\\(\text{M}\alpha\text{thjax Test}\\)
-`.trim()
-);
+const html = ref("");
+const text = ref("");
+const name = ref("");
+
+function initiateDownload() {
+  download(text.value, name.value, "md");
+  download(html.value, name.value, "html");
+}
 </script>
 
 <script>
+import EditableDocument from "@/components/EditableDocument.vue";
+import LinkGenerator from "@/components/LinkGenerator.vue";
+
 export default {
   data() {
     return {
@@ -30,7 +33,6 @@ export default {
   components: {
     EditableDocument,
     LinkGenerator,
-    MarkdownRenderer,
   },
 
   methods: {
@@ -52,23 +54,19 @@ export default {
     toggleHTMLView() {
       this.showHTML = !this.showHTML;
     },
-    initiateDownload() {
-      this.download = !this.download;
-    }
   },
 };
 </script>
 
 <template>
   <div class="markdown">
-    <textarea v-model="str"></textarea>
-    <MarkdownRenderer :content="str"></MarkdownRenderer>
-
     <div>
       <EditableDocument
         v-if="showEditableDocument"
         :renderText="showHTML"
-        :downloadConfirm="download"
+        @html="(newHtml) => (html = newHtml)"
+        @name="(newName) => (name = newName)"
+        @text="(newText) => (text = newText)"
       ></EditableDocument>
 
       <span class="p-buttonset">

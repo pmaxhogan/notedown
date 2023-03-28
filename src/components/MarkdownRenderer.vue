@@ -1,7 +1,9 @@
 <script setup>
 import * as DOMPurify from "dompurify";
 import { parse } from "marked";
-import { ref, watchEffect } from "vue";
+import { defineEmits, ref, watchEffect } from "vue";
+
+const emit = defineEmits(["html"]);
 
 const sanitize = DOMPurify.default.sanitize;
 
@@ -21,6 +23,7 @@ const output = ref("");
 
 watchEffect(() => {
   output.value = sanitize(parse(props.content));
+  emit("html", output.value);
   window.requestAnimationFrame(() => {
     if (typeof window.MathJax !== "undefined") {
       // FIXME: testing does not work
