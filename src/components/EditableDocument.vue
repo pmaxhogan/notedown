@@ -1,8 +1,9 @@
 <script setup>
-import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
+import MarkdownRenderer from "../components/MarkdownRenderer.vue";
 import { ref, watchEffect } from "vue";
+import { computed } from "vue";
 
-const emit = defineEmits(["html", "text", "name"]);
+const emit = defineEmits(["html", "text", "name"]); 
 
 const contentToRender = ref(
   String.raw`
@@ -23,17 +24,35 @@ const props = defineProps({
     required: true,
   },
 });
+
+const invalidDocumentName = computed(() => {
+  const specialCharRegex = /^[!@#$%^&*(),.?":{}|<>]/;
+  return (
+    documentName.value.trim() === "" ||
+    specialCharRegex.test(documentName.value)
+  );
+});
+
+watchEffect(() => {
+  if (!invalidDocumentName.value) {
+    emit("name", documentName.value);
+  }
+});
 </script>
 
 <template>
   <div>
     <textarea
       class="edit-filename"
+      :class="{ 'invalid-name': invalidDocumentName }"
       type="text"
       placeholder="Untitled Document"
       required="required"
       v-model="documentName"
     ></textarea>
+    <div v-if="invalidDocumentName" class="error-message">
+      Document name should not be empty or start with a special character.
+    </div>
 
     <textarea
       class="editable-area"
@@ -73,5 +92,15 @@ const props = defineProps({
   color: #000000;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.invalid-name {
+  border-color: #f14668;
+}
+
+.error-message {
+  color: #f14668;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 </style>
