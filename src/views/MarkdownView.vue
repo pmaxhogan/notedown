@@ -9,15 +9,13 @@ import "@/assets/themes/mytheme/theme.scss";
 
 var nodeID = [0, 1];
 var childrenCount = [0, 0];
-var prevNode = 1;
 var currNode = 1;
-
 var HTMLonly = false;
 var MDonly = false;
 
 const html = ref("");
 const text = ref("");
-const name = ref("");
+const name = ref("Untitled Document");
 const nodes = ref([
   {
     key: "" + nodeID[0],
@@ -40,7 +38,7 @@ const docActions = ref([
     command: () => {
       nodes.value[0].children.push({
         key: "0-" + childrenCount[0],
-        label: name.value,
+        label: name.value + ".html",
         data: text.value,
       });
       childrenCount[0]++;
@@ -54,7 +52,7 @@ const docActions = ref([
       nodes.value[0].children.splice(childrenCount[0]);
       nodes.value[1].children.push({
         key: "1-" + childrenCount[1],
-        label: name.value,
+        label: name.value + ".html",
         data: text.value,
       });
       childrenCount[1]++;
@@ -66,6 +64,21 @@ const docActions = ref([
     command: () => {
       nodes.value[1].children.splice(0);
       childrenCount[1] = 0;
+    },
+  },
+]);
+
+const folderActions = ref([
+  {
+    label: "Delete Folder",
+    icon: "pi pi-trash",
+    command: () => {
+      //delete only user created folders
+      if (currNode > 1) {
+        nodes.value.splice(nodeID[currNode]);
+        nodeID.splice(currNode);
+        currNode--;
+      }
     },
   },
 ]);
@@ -102,16 +115,15 @@ function initiateDownload() {
     default:
       download(html.value, name.value, "html");
       download(text.value, name.value, "md");
+      break;
   }
 }
 
 function createNodes() {
-  currNode = prevNode++;
-  nodeID.push(currNode);
-
+  nodeID.push(++currNode);
   nodes.value.push({
     key: "" + nodeID[currNode],
-    label: "New Folder",
+    label: "New Folder " + nodeID[currNode],
     icon: "pi pi-folder",
     children: [],
   });
@@ -174,11 +186,12 @@ export default {
         @click="initiateDownload"
         :model="downloadItems"
       ></SplitButton>
-      <Button
+      <SplitButton
         @click="createNodes"
         label="New Folder"
         icon="pi pi-folder"
-      ></Button>
+        :model="folderActions"
+      ></SplitButton>
     </span>
 
     <div>

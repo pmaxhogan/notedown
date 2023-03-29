@@ -1,7 +1,7 @@
 <script setup>
 import * as DOMPurify from "dompurify";
 import { parse } from "marked";
-import { defineEmits, ref, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 const emit = defineEmits(["html"]);
 

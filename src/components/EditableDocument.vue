@@ -1,6 +1,6 @@
 <script setup>
 import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
-import { defineEmits, ref, watchEffect } from "vue";
+import { ref, watchEffect } from "vue";
 
 const emit = defineEmits(["html", "text", "name"]);
 
@@ -10,7 +10,7 @@ const contentToRender = ref(
 \\(\text{M}\alpha\text{thjax Test}\\)
 `.trim()
 );
-const documentName = ref("");
+const documentName = ref("Untitled Document");
 
 watchEffect(() => {
   emit("text", contentToRender.value);
@@ -30,7 +30,7 @@ const props = defineProps({
     <textarea
       class="edit-filename"
       type="text"
-      placeholder="Enter Document Name"
+      placeholder="Untitled Document"
       required="required"
       v-model="documentName"
     ></textarea>
