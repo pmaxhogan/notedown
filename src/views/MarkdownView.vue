@@ -3,15 +3,118 @@ import { ref } from "vue";
 import download from "@/lib/download.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
+import SplitButton from "primevue/splitbutton";
+import Tree from "primevue/tree";
 import "@/assets/themes/mytheme/theme.scss";
+
+var nodeID = [0, 1];
+var childrenCount = [0, 0];
+var prevNode = 1;
+var currNode = 1;
+
+var HTMLonly = false;
+var MDonly = false;
 
 const html = ref("");
 const text = ref("");
 const name = ref("");
+const nodes = ref([
+  {
+    key: "" + nodeID[0],
+    label: "Default",
+    icon: "pi pi-folder",
+    children: [],
+  },
+  {
+    key: "" + nodeID[1],
+    label: "Trash",
+    icon: "pi pi-trash",
+    children: [],
+  },
+]);
+
+const docActions = ref([
+  {
+    label: "Add to Default",
+    icon: "pi pi-plus",
+    command: () => {
+      nodes.value[0].children.push({
+        key: "0-" + childrenCount[0],
+        label: name.value,
+        data: text.value,
+      });
+      childrenCount[0]++;
+    },
+  },
+  {
+    label: "Move to Trash",
+    icon: "pi pi-trash",
+    command: () => {
+      childrenCount[0]--;
+      nodes.value[0].children.splice(childrenCount[0]);
+      nodes.value[1].children.push({
+        key: "1-" + childrenCount[1],
+        label: name.value,
+        data: text.value,
+      });
+      childrenCount[1]++;
+    },
+  },
+  {
+    label: "Clear Trash",
+    icon: "pi pi-truck",
+    command: () => {
+      nodes.value[1].children.splice(0);
+      childrenCount[1] = 0;
+    },
+  },
+]);
+
+const downloadItems = [
+  {
+    label: ".HTML Only",
+    icon: "pi pi-download",
+    command: () => {
+      HTMLonly = true;
+      initiateDownload();
+      HTMLonly = false;
+    },
+  },
+  {
+    label: ".MD Only",
+    icon: "pi pi-download",
+    command: () => {
+      MDonly = true;
+      initiateDownload();
+      MDonly = false;
+    },
+  },
+];
 
 function initiateDownload() {
-  download(text.value, name.value, "md");
-  download(html.value, name.value, "html");
+  switch (true) {
+    case HTMLonly:
+      download(html.value, name.value, "html");
+      break;
+    case MDonly:
+      download(text.value, name.value, "md");
+      break;
+    default:
+      download(html.value, name.value, "html");
+      download(text.value, name.value, "md");
+  }
+}
+
+function createNodes() {
+  currNode = prevNode++;
+  nodeID.push(currNode);
+
+  nodes.value.push({
+    key: "" + nodeID[currNode],
+    label: "New Folder",
+    icon: "pi pi-folder",
+    children: [],
+  });
 }
 </script>
 
@@ -26,6 +129,7 @@ export default {
       showShareDialog: false,
       copyConfirmed: false,
       showEditableDocument: false,
+      saveStatus: false,
       showHTML: false,
       download: false,
     };
@@ -40,9 +144,6 @@ export default {
       this.$refs.clone.focus();
       document.execCommand("copy");
       this.copyConfirmed = true;
-    },
-    captureLink(sl) {
-      this.link = sl;
     },
     toggleDialog() {
       this.showShareDialog = !this.showShareDialog;
@@ -60,7 +161,36 @@ export default {
 
 <template>
   <div class="markdown">
+    <span class="p-buttonset">
+      <SplitButton
+        @click="toggleEditableDocument"
+        label="New Document"
+        icon="pi pi-file"
+        :model="docActions"
+      ></SplitButton>
+      <SplitButton
+        label="Download"
+        icon="pi pi-download"
+        @click="initiateDownload"
+        :model="downloadItems"
+      ></SplitButton>
+      <Button
+        @click="createNodes"
+        label="New Folder"
+        icon="pi pi-folder"
+      ></Button>
+    </span>
+
     <div>
+      <Tree :value="nodes" class="treeFormat">
+        <template #default="slotProps">
+          <b>{{ slotProps.node.label }}</b>
+        </template>
+        <template #url="slotProps">
+          <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
+        </template>
+      </Tree>
+
       <EditableDocument
         v-if="showEditableDocument"
         :renderText="showHTML"
@@ -68,59 +198,47 @@ export default {
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
       ></EditableDocument>
-
-      <span class="p-buttonset">
-        <Button
-          @click="toggleEditableDocument"
-          label="Create"
-          icon="pi pi-file"
-        ></Button>
-        <Button
-          @click="toggleHTMLView"
-          label="Preview"
-          icon="pi pi-eye"
-        ></Button>
-        <Button
-          @click="initiateDownload"
-          label="Download"
-          icon="pi pi-download"
-        ></Button>
-        <Button
-          @click="toggleDialog"
-          label="Share"
-          icon="pi pi-external-link"
-        ></Button>
-      </span>
     </div>
-  </div>
 
-  <Dialog position="center" v-model:visible="showShareDialog">
-    <template #header>
-      <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
-      <h3 v-else>Invite Others to View Your NoteDown</h3>
-    </template>
-
-    <LinkGenerator @shareableLink="captureLink"></LinkGenerator>
-
-    <textarea
-      v-if="!copyConfirmed"
-      class="displayLinkArea"
-      v-on:focus="$event.target.select()"
-      ref="clone"
-      readonly
-      :value="link"
-    ></textarea>
-
-    <template #footer>
+    <span class="p-buttonset">
+      <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
-        v-if="copyConfirmed"
         @click="toggleDialog"
-        label="Close"
-        icon="pi pi-times"
+        label="Share"
+        icon="pi pi-external-link"
       ></Button>
-      <Button v-else @click="copy" label="Copy" icon="pi pi-link"></Button>
-    </template>
-  </Dialog>
+    </span>
+
+    <Dialog position="center" v-model:visible="showShareDialog">
+      <template #header>
+        <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
+        <h3 v-else>Invite Others to View Your NoteDown</h3>
+      </template>
+
+      <LinkGenerator
+        @shareableLink="(newLink) => (link = newLink)"
+      ></LinkGenerator>
+
+      <textarea
+        v-if="!copyConfirmed"
+        class="displayLinkArea"
+        v-on:focus="$event.target.select()"
+        ref="clone"
+        readonly
+        :value="link"
+      ></textarea>
+
+      <template #footer>
+        <Button
+          v-if="copyConfirmed"
+          @click="toggleDialog"
+          label="Close"
+          icon="pi pi-times"
+        ></Button>
+        <Button v-else @click="copy" label="Copy" icon="pi pi-link"></Button>
+      </template>
+    </Dialog>
+  </div>
 </template>
 
 <style lang="scss">
@@ -137,5 +255,9 @@ textarea {
   font-size: 16px;
   background-color: #fff9fe;
   border-color: #fff9fe;
+}
+.treeFormat {
+  background-color: #e2d5ec;
+  border-color: #e2d5ec;
 }
 </style>
