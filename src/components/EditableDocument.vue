@@ -3,7 +3,7 @@ import MarkdownRenderer from "../components/MarkdownRenderer.vue";
 import { ref, watchEffect } from "vue";
 import { computed } from "vue";
 
-const emit = defineEmits(["html", "text", "name"]); 
+const emit = defineEmits(["html", "text", "name"]);
 
 const contentToRender = ref(
   String.raw`
