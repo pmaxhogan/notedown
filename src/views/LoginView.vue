@@ -3,7 +3,7 @@
     data(){
     },
     methods:{
-      hello(){
+      Login(){
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         if(email === '' || email.length < 10 || password === '' || password.length < 6){
@@ -13,6 +13,9 @@
           window.location.href = '/markdown';
         }
       },
+      Logout(){
+        window.location.href = '/';
+      }
     }
   };
 </script>
@@ -29,5 +32,7 @@
     <input type="password" id="password">
     <div class="error"></div>
   </form>
-  <button type="submit" @click="hello">Log in</button>
+  <button type="submit" @click="Login">Log in</button>
+
+  <button type="logout" @click="Logout">Log out</button>
 </template>
