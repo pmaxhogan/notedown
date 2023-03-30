@@ -14,5 +14,8 @@ export default {
   mounted() {
     this.sendShareableLink();
   },
+  render() {
+    return [];
+  },
 };
 </script>

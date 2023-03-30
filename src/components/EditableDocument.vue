@@ -1,66 +1,106 @@
+<script setup>
+import MarkdownRenderer from "../components/MarkdownRenderer.vue";
+import { ref, watchEffect } from "vue";
+import { computed } from "vue";
+
+const emit = defineEmits(["html", "text", "name"]); 
+
+const contentToRender = ref(
+  String.raw`
+# Markdown Test!
+\\(\text{M}\alpha\text{thjax Test}\\)
+`.trim()
+);
+const documentName = ref("Untitled Document");
+
+watchEffect(() => {
+  emit("text", contentToRender.value);
+  emit("name", documentName.value);
+});
+
+const props = defineProps({
+  renderText: {
+    type: Boolean,
+    required: true,
+  },
+});
+
+const invalidDocumentName = computed(() => {
+  const specialCharRegex = /^[!@#$%^&*(),.?":{}|<>]/;
+  return (
+    documentName.value.trim() === "" ||
+    specialCharRegex.test(documentName.value)
+  );
+});
+
+watchEffect(() => {
+  if (!invalidDocumentName.value) {
+    emit("name", documentName.value);
+  }
+});
+</script>
+
 <template>
-  <div class="editable-document">
-    <div
-      ref="editableArea"
+  <div>
+    <textarea
+      class="edit-filename"
+      :class="{ 'invalid-name': invalidDocumentName }"
+      type="text"
+      placeholder="Untitled Document"
+      required="required"
+      v-model="documentName"
+    ></textarea>
+    <div v-if="invalidDocumentName" class="error-message">
+      Document name should not be empty or start with a special character.
+    </div>
+
+    <textarea
       class="editable-area"
-      contenteditable="true"
-      @input="onContentChange"
-      @blur="onBlur"
-      @focus="onFocus"
-    ></div>
+      type="text"
+      placeholder="Start Typing!"
+      v-model="contentToRender"
+    ></textarea>
+
+    <MarkdownRenderer
+      v-show="props.renderText"
+      :content="contentToRender"
+      @html="emit('html', $event)"
+    ></MarkdownRenderer>
   </div>
 </template>
 
-<script>
-export default {
-  name: "EditableDocument",
-
-  data() {
-    return {
-      focused: false,
-    };
-  },
-
-  computed: {
-    isFocused() {
-      return this.focused;
-    },
-  },
-
-  methods: {
-    onContentChange() {
-      const content = this.$refs.editableArea.innerHTML;
-      this.$emit("update", content);
-    },
-
-    onBlur() {
-      this.focused = false;
-    },
-
-    onFocus() {
-      this.focused = true;
-    },
-  },
-};
-</script>
-
 <style scoped>
-.editable-document {
-  position: relative;
+.edit-filename {
+  max-height: 25px;
+  padding: 0.1rem;
+  padding-left: 1rem;
+  resize: none;
 }
-
 .editable-area {
   min-height: 200px;
-  padding: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  outline: none;
   resize: vertical;
+  padding: 1rem;
+}
+.edit-filename,
+.editable-area {
+  border-radius: 4px;
+  border-color: #e2d5ec;
   overflow: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
-  background-color: #FFF9FE;
-  border-color: #FFF9FE;
+  background-color: #fff9fe;
   color: #000000;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+.invalid-name {
+  border-color: #f14668;
+}
+
+.error-message {
+  color: #f14668;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
 }
 </style>
