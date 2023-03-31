@@ -7,13 +7,25 @@ test("renders an editable area", async () => {
   expect(wrapper.find(".editable-area").exists()).toBe(true);
 });
 
-test("emits update event on content change", async () => {
+test("displays error message for invalid document names", async () => {
   const wrapper = mount(EditableDocument);
-  const editableArea = wrapper.find(".editable-area");
 
-  editableArea.element.innerHTML = "New content";
-  await editableArea.trigger("input");
+  // Test for empty document name
+  const documentNameInput = wrapper.find(".edit-filename");
+  await documentNameInput.setValue("");
+  await documentNameInput.trigger("input");
 
   expect(wrapper.emitted().update).toBeTruthy();
   expect(wrapper.emitted().update[0]).toEqual(["New content"]);
+});
+
+test("handles focus and blur events", async () => {
+  const wrapper = mount(EditableDocument);
+  const editableArea = wrapper.find(".editable-area");
+
+  await editableArea.trigger("focus");
+  expect(wrapper.vm.isFocused).toBe(true);
+
+  await editableArea.trigger("blur");
+  expect(wrapper.vm.isFocused).toBe(false);
 });

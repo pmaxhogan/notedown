@@ -7,11 +7,19 @@ import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
 import "@/assets/themes/mytheme/theme.scss";
 
+<<<<<<< HEAD
 var nodeID = [0, 1];
 var childrenCount = [0, 0];
 var currNode = 1;
 var HTMLonly = false;
 var MDonly = false;
+=======
+let nodeID = [0, 1];
+let childrenCount = [0, 0];
+let currNode = 1;
+let HTMLonly = false;
+let MDonly = false;
+>>>>>>> 6f1fae633212bf422a0a6361e43b787d382b4404
 
 const html = ref("");
 const text = ref("");
