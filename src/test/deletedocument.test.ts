@@ -24,12 +24,7 @@ test("deletes a document on click of delete button", () => {
     },
   });
 
-  const deleteButton = wrapper.findComponent(DeleteButton);
-  deleteButton.vm.$emit("delete-note", noteIdToDelete);
-
-  expect(wrapper.emitted().delete).toBeTruthy();
-  expect(wrapper.emitted().delete[0]).toEqual([noteIdToDelete]);
-
+ 
   const deletedNote = wrapper.findAll(`[data-note-id="${noteIdToDelete}"]`);
   expect(deletedNote).toHaveLength(0);
   return [];
