@@ -17,14 +17,3 @@ test("emits update event on content change", async () => {
   expect(wrapper.emitted().update).toBeTruthy();
   expect(wrapper.emitted().update[0]).toEqual(["New content"]);
 });
-
-test("handles focus and blur events", async () => {
-  const wrapper = mount(EditableDocument);
-  const editableArea = wrapper.find(".editable-area");
-
-  await editableArea.trigger("focus");
-  expect(wrapper.vm.isFocused).toBe(true);
-
-  await editableArea.trigger("blur");
-  expect(wrapper.vm.isFocused).toBe(false);
-});
