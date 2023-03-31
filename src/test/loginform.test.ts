@@ -1,5 +1,5 @@
 import { mount } from "@vue/test-utils";
-import LoginForm from "../components/LoginForm.vue";
+import Login from "../components/Login.vue";
 import { expect, test } from "vitest";
 
 const validEmail = "random123@gmail.com";
@@ -8,7 +8,7 @@ const invalid = '';
 
 
 test("valid information", async () => {
-  const wrapper = mount(LoginForm);
+  const wrapper = mount(Login);
   
 
   await wrapper.find('input[type=email]').setValue(validEmail)
@@ -17,11 +17,11 @@ test("valid information", async () => {
 
   expect(wrapper.vm.email).toBe(validEmail);
   expect(wrapper.vm.password).toBe(validPassword);
-  expect(LoginForm).toBeTruthy()
+  expect(Login).toBeTruthy()
 
 })
 test("Invalid password"), async () => {
-  const wrapper = mount(LoginForm);
+  const wrapper = mount(Login);
   
 
   await wrapper.find('input[type=email]').setValue(validEmail)
@@ -32,7 +32,7 @@ test("Invalid password"), async () => {
   expect(wrapper.vm.password).toBe(invalid);
 }
 test("Invalid email"), async () => {
-  const wrapper = mount(LoginForm);
+  const wrapper = mount(Login);
   
 
   await wrapper.find('input[type=email]').setValue(invalid)
@@ -43,7 +43,7 @@ test("Invalid email"), async () => {
   expect(wrapper.vm.password).toBe(validPassword);
 }
 test("Invalid email/password"), async () => {
-  const wrapper = mount(LoginForm);
+  const wrapper = mount(Login);
   
 
   await wrapper.find('input[type=email]').setValue(invalid)
