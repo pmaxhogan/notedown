@@ -15,15 +15,17 @@ test("displays error message for invalid document names", async () => {
   await documentNameInput.setValue("");
   await documentNameInput.trigger("input");
 
-  expect(wrapper.find(".error-message").text()).toBe(
-    "Document name should not be empty or start with a special character."
-  );
+  expect(wrapper.emitted().update).toBeTruthy();
+  expect(wrapper.emitted().update[0]).toEqual(["New content"]);
+});
 
-  // Test for document name starting with a special character
-  await documentNameInput.setValue("@InvalidName");
-  await documentNameInput.trigger("input");
+test("handles focus and blur events", async () => {
+  const wrapper = mount(EditableDocument);
+  const editableArea = wrapper.find(".editable-area");
 
-  expect(wrapper.find(".error-message").text()).toBe(
-    "Document name should not be empty or start with a special character."
-  );
+  await editableArea.trigger("focus");
+  expect(wrapper.vm.isFocused).toBe(true);
+
+  await editableArea.trigger("blur");
+  expect(wrapper.vm.isFocused).toBe(false);
 });

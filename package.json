@@ -36,7 +36,7 @@
     "@vitejs/plugin-vue": "^4.0.0",
     "@vitejs/plugin-vue-jsx": "^3.0.0",
     "@vue/eslint-config-prettier": "^7.0.0",
-    "@vue/test-utils": "^2.2.10",
+    "@vue/test-utils": "^2.3.2",
     "eslint": "^8.22.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-vue": "^9.3.0",
