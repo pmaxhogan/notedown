@@ -13,7 +13,10 @@ test("deletes a document on click of delete button", () => {
   ];
 
   const wrapper = mount(EditableDocument, {
-    props: { notes },
+    props: {
+      notes,
+      renderText: (text) => text(),
+    },
     global: {
       components: {
         DeleteButton,
