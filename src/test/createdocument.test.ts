@@ -7,13 +7,23 @@ test("renders an editable area", async () => {
   expect(wrapper.find(".editable-area").exists()).toBe(true);
 });
 
-test("emits update event on content change", async () => {
+test("displays error message for invalid document names", async () => {
   const wrapper = mount(EditableDocument);
-  const editableArea = wrapper.find(".editable-area");
 
-  editableArea.element.innerHTML = "New content";
-  await editableArea.trigger("input");
+  // Test for empty document name
+  const documentNameInput = wrapper.find(".edit-filename");
+  await documentNameInput.setValue("");
+  await documentNameInput.trigger("input");
 
-  expect(wrapper.emitted().update).toBeTruthy();
-  expect(wrapper.emitted().update[0]).toEqual(["New content"]);
+  expect(wrapper.find(".error-message").text()).toBe(
+    "Document name should not be empty or start with a special character."
+  );
+
+  // Test for document name starting with a special character
+  await documentNameInput.setValue("@InvalidName");
+  await documentNameInput.trigger("input");
+
+  expect(wrapper.find(".error-message").text()).toBe(
+    "Document name should not be empty or start with a special character."
+  );
 });
