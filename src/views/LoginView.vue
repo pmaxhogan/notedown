@@ -12,7 +12,7 @@ import Login from "@/components/Login.vue";
 </script>
 
 <template>
-  <div class="loginSection">
+  <div class="login">
     <Login />
   </div>
 </template>
