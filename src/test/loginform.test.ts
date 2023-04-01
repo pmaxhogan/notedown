@@ -1,11 +1,10 @@
 import { mount } from "@vue/test-utils";
-import Login from "../components/Login.vue";
+import Login from "../components/LoginForm.vue";
 import { expect, test } from "vitest";
 
 const validEmail = "random123@gmail.com";
 const validPassword = "hello123";
 const invalid = '';
-
 
 test("valid information", async () => {
   const wrapper = mount(Login);
