@@ -1,7 +1,7 @@
 <template>
   <form action="" id="form">
     <div v-if="error && error.length">
-      <p v-for="e in error" v-bind:key="e.id">{{ e }}</p>
+      <p v-for="e in error" :key="e.id">{{ e }}</p>
     </div>
     <label for="email">Email:</label>
     <br />
@@ -15,31 +15,23 @@
   <button type="submit" @click="login">Log in</button>
 </template>
 
-<script>
-export default {
-  name: "Login",
-  data() {
-    return {
-      error: [],
-      email: "",
-      password: "",
-    };
-  },
-  methods: {
-    login() {
-      // const email = document.getElementById('email').value
-      // const password = document.getElementById('password').value
-      this.error = [];
-      if (!this.email) {
-        this.error.push("Invalid email");
-      }
-      if (!this.password) {
-        this.error.push("Invalid password");
-      }
-      if (this.error.length <= 0) {
-        window.location.href = "/";
-      }
-    },
-  },
-};
+<script setup>
+import { ref } from "vue";
+
+const error = ref([]);
+const email = ref("");
+const password = ref("");
+
+function login() {
+  error.value = [];
+  if (!email.value) {
+    error.value.push("Invalid email");
+  }
+  if (!password.value) {
+    error.value.push("Invalid password");
+  }
+  if (error.value.length <= 0) {
+    window.location.href = "/";
+  }
+}
 </script>
