@@ -12,7 +12,6 @@ import "primeicons/primeicons.css";
 import "./assets/main.css";
 
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
 import { VueFire, VueFireAuth } from "vuefire";
 // ... other firebase imports
 
@@ -27,7 +26,7 @@ export const firebaseApp = initializeApp({
 });
 
 // used for the firestore refs
-const db = getFirestore(firebaseApp);
+// const db = getFirestore(firebaseApp);
 
 // here we can export reusable database references
 // export const todosRef = collection(db, 'todos')
