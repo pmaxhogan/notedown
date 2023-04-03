@@ -56,6 +56,7 @@ img {
   background: #0e1315;
   vertical-align: middle;
   margin: 0 0.5rem;
+  border: 1px solid black;
 }
 
 header {
