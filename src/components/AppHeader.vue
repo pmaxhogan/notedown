@@ -1,10 +1,46 @@
-<script setup>
+<script setup> 
 import { useCurrentUser, useDocument } from "vuefire";
 import { db } from "@/main";
-import { collection, doc } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { collection, doc, setDoc } from "firebase/firestore";
 import { onMounted, ref, watch } from "vue";
+import LoginView from "../views/LoginView.vue"
+
+//LOGIN
+const provider = new GoogleAuthProvider();
+const auth = getAuth();
 
 const user = useCurrentUser();
+
+// here we can export reusable database references
+
+async function loginWithGoogle() {
+  await signInWithPopup(auth, provider);
+  const userDocRef = doc(collection(db, "users"), user?.value?.uid ?? "");
+  const userDoc = await getDoc(userDocRef);
+
+  if (!userDoc.exists()) {
+    await setDoc(userDocRef, {
+      name: user?.value?.displayName,
+      email: user?.value?.email,
+      photoURL: user?.value?.photoURL,
+    });
+  }
+}
+
+//DROPDOWN
+function dropdown() {
+  const element = document.getElementById("dropdown");
+  if(element.style.display === "none"){
+    element.style.display = "block";
+  }
+  else{
+    element.style.display = "none";
+  }
+}
+
+
+
 
 // ref that stores the user document as an object from firebase, or null if not logged in etc
 let userDocRef = ref(null);
@@ -23,32 +59,57 @@ onMounted(() => {
 </script>
 
 <template>
+  
   <header>
-    <h3>Welcome to NoteDown</h3>
-    <nav>
+    
+    <h1>NoteDown <font-awesome-icon icon="fa-solid fa-pen-to-square" /></h1>
+    <nav class="navigation-items">
       <ul>
-        <li><RouterLink to="/">Home</RouterLink></li>
-        <li><RouterLink to="/about">About</RouterLink></li>
-        <li><RouterLink to="/markdown">Markdown</RouterLink></li>
-        <li>
+        <li><RouterLink to="/" class="text">Home</RouterLink></li>
+        <li><RouterLink to="/about" class="text">About</RouterLink></li>
+        <li><RouterLink to="/markdown" class="text">Markdown</RouterLink></li>
+        <li v-if="user">  
           <img
             v-if="userDocRef?.value?.photoURL"
             :alt="userDocRef?.value?.name"
             :src="userDocRef?.value?.photoURL"
           />
-          <span v-text="userDocRef?.value?.name ?? 'Not Logged In'" />
         </li>
         <li>
-          <RouterLink v-if="!user" to="/login">Login</RouterLink>
-          <RouterLink v-else to="/logout">Logout</RouterLink>
+          <div v-if="!user">
+            <div class="userProfile">
+             <font-awesome-icon class="icon" icon="fa-solid fa-user" @click="dropdown()"/> 
+            </div>
+            
+
+            <div class="dropdown-wrapper" id="dropdown">
+            <div class="dropdown">
+            <button type="submit" @click="loginWithGoogle()"> Sign in with <font-awesome-icon icon="fa-brands fa-google" class="brand" /></button>
+            <button type="submit"> Sign in with <font-awesome-icon icon="fa-brands fa-github" class="brand" /></button>
+          </div>
+
+      </div>
+          </div>
+          <RouterLink v-else to="/logout" class="text" >Logout</RouterLink>
         </li>
       </ul>
     </nav>
   </header>
+  <body>
+  </body>
 </template>
 
 ...
 <style lang="scss">
+@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Montserrat:wght@300;400;500&family=Poppins:wght@200;400;500&family=Raleway:wght@400;500&family=Rubik&display=swap');
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body{
+  background-color: #FFF9FE;
+}
 img {
   width: 30px;
   height: 30px;
@@ -61,33 +122,85 @@ img {
 
 header {
   display: flex;
-  border-bottom: 1px solid #ccc;
-  padding: 0.5rem 1rem;
-  line-height: 1.5;
-  max-height: 100vh;
-
-  h3 {
-    margin-left: 1rem;
-    text-align: start;
+  justify-content: space-between;
+  background-color: #A982C6;
+  align-items: center;
+  height: 6.4vh;
+  padding-left: 28px;
+  padding-right: 28px;
+  .icon{
+    font-size: 20px;
+  }
+  h1{
+    font-family: 'Courgette', cursive;
+    font-size: 27px;
+  }
+  nav ul{
+    list-style-type: none;
+  }
+  nav ul li{
+    display: inline-block;
+    margin-left: 42px;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+  }
+  .text:hover{
+    color: #FFF9FE;
+  }
+  .text{
+    text-decoration: none;
+    color: black;
+  }
+  .userProfile{
+    cursor: pointer;
   }
 }
+.dropdown-wrapper{
+  display: none;
+  background-color: #e5d0f5;
+  border-radius: 10px;
+  height:160px;
+  width: 240px;
+  position: absolute;
+  top: 58px;
+  right:25px;
 
-nav {
-  margin-left: auto;
-  text-align: end;
-  font-size: 14px;
+  .dropdown{
+    display: block;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 
-  ul {
-    list-style: none;
-
-    li {
+    button{
+      display: flex;
+      justify-content: center;
       align-items: center;
-      display: inline-flex;
-      margin-left: 1rem;
-      vertical-align: middle;
+
+      margin-bottom: 10px;
+      margin-top: 10px;
+      width: 180px;
+      height: 38px;
+      border-radius: 20px;
+      border: none;
+      background-color: #322467;
+      color: #FFFF;
+      font-size: 16px;
+      font-family:'Montserrat', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      
+      .brand{
+        padding-left: 7px;
+      }
+
+
     }
   }
 }
+
 
 nav a.router-link-exact-active {
   color: var(--color-text);
@@ -105,4 +218,6 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
+
+
 </style>

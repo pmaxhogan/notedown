@@ -4,7 +4,8 @@ import { expect, test } from "vitest";
 
 const validEmail = "random123@gmail.com";
 const validPassword = "hello123";
-const invalid = "";
+const invalid = '';
+
 
 test("valid information", async () => {
   const wrapper = mount(Login);

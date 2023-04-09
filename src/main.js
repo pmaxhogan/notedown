@@ -49,4 +49,22 @@ app.use(VueFire, {
   ],
 });
 
+import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
+import { faGithub } from "@fortawesome/free-brands-svg-icons";
+
+app.component("font-awesome-icon", FontAwesomeIcon);
+app.component('font-awesome-layers', FontAwesomeLayers)
+app.component('font-awesome-layers-text', FontAwesomeLayersText)
+
+library.add(faPenToSquare);
+library.add(faUser);
+library.add(faGithub);
+library.add(faGoogle);
+
+
+
 app.mount("#app");
