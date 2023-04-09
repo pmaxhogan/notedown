@@ -21,6 +21,4 @@ export default async function updateDocument(text, html, documentID) {
     htmlString: html,
     timeStamp: serverTimestamp(),
   });
-
-  console.log("Changes written to document " + documentID);
 }

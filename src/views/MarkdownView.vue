@@ -1,8 +1,13 @@
 <script setup>
 import { ref } from "vue";
+
+//Helper Functions
 import download from "@/lib/download.js";
 import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
+import deleteDocument from "@/lib/deleteDocument.js";
+
+//PrimeVue Components
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
@@ -59,12 +64,18 @@ async function addToDatabase() {
     text.value,
     html.value
   );
-  console.log("Saved Document ID: ", currDocRef.value);
+  console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
 
 function updateInDatabase() {
   //updateDocument(name.value, text.value, html.value, currDocRef.value);
   updateDocument(text.value, html.value, currDocRef.value);
+  console.log("Changes written to Document ID: ", currDocRef.value);
+}
+
+function deleteInDatabase() {
+  deleteDocument(currDocRef.value);
+  console.log("Permanently deleted Document ID: ", currDocRef.value);
 }
 </script>
 
@@ -142,6 +153,11 @@ export default {
         @click="addToDatabase"
       ></Button>
       <Button label="Save" icon="pi pi-file" @click="updateInDatabase"></Button>
+      <Button
+        label="Delete"
+        icon="pi pi-trash"
+        @click="deleteInDatabase"
+      ></Button>
       <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
         @click="toggleDialog"
