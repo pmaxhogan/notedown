@@ -1,8 +1,5 @@
 <template>
-  <div class="login">
-    <LoginForm />
-    <button @click="loginWithGoogle">Login with Google</button>
-  </div>
+
 </template>
 
 <script setup>
@@ -32,4 +29,5 @@ async function loginWithGoogle() {
     });
   }
 }
+
 </script>

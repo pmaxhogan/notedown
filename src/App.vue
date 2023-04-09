@@ -32,7 +32,7 @@ onMounted(() => {
 <template>
   <AppHeader />
   <RouterView />
-  <AppFooter />
+  <!-- <AppFooter /> -->
 </template>
 
 <style></style>
