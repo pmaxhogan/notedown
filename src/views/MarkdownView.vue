@@ -2,16 +2,18 @@
 import { ref } from "vue";
 import download from "@/lib/download.js";
 import createNewDocument from "@/lib/createNewDocument.js";
+import updateDocument from "@/lib/updateDocument.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
-import Tree from "primevue/tree";
+//import Tree from "primevue/tree";
 import "@/assets/themes/mytheme/theme.scss";
 
 const html = ref("");
 const text = ref("");
 const name = ref("Untitled Document");
 
+const currDocRef = ref("");
 let HTMLonly = false;
 let MDonly = false;
 
@@ -51,8 +53,18 @@ function initiateDownload() {
   }
 }
 
-function addToDatabase() {
-  createNewDocument(name.value, text.value, html.value);
+async function addToDatabase() {
+  currDocRef.value = await createNewDocument(
+    name.value,
+    text.value,
+    html.value
+  );
+  console.log("Saved Document ID: ", currDocRef.value);
+}
+
+function updateInDatabase() {
+  //updateDocument(name.value, text.value, html.value, currDocRef.value);
+  updateDocument(text.value, html.value, currDocRef.value);
 }
 </script>
 
@@ -114,15 +126,6 @@ export default {
     </span>
 
     <div>
-      <Tree :value="nodes" class="treeFormat">
-        <template #default="slotProps">
-          <b>{{ slotProps.node.label }}</b>
-        </template>
-        <template #url="slotProps">
-          <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
-        </template>
-      </Tree>
-
       <EditableDocument
         v-if="showEditableDocument"
         :renderText="showHTML"
@@ -138,6 +141,7 @@ export default {
         icon="pi pi-file"
         @click="addToDatabase"
       ></Button>
+      <Button label="Save" icon="pi pi-file" @click="updateInDatabase"></Button>
       <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
         @click="toggleDialog"

@@ -5,7 +5,6 @@ import { db } from "@/main"; //firestore instance
 
 export default async function createNewDocument(docName, text, html) {
   const userID = useCurrentUser()?.value?.uid;
-
   //create new document
   const newDocRef = doc(collection(db, "users/" + userID + "/Default"));
   await setDoc(newDocRef, {
@@ -15,4 +14,5 @@ export default async function createNewDocument(docName, text, html) {
     htmlString: html,
     timeStamp: serverTimestamp(),
   });
+  return newDocRef.id;
 }
