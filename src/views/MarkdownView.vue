@@ -8,7 +8,7 @@ import Tree from "primevue/tree";
 import "@/assets/themes/mytheme/theme.scss";
 
 //firebase imports
-import { collection, doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/main"; //firestore instance
 
 const html = ref("");
@@ -19,17 +19,17 @@ async function createNotes() {
   alert("Hopefully adding to firebase");
   const notesRef = doc(collection(db, "notes"));
   await setDoc(
-    notesRef, 
+    notesRef,
     {
       //data to write to the document
-      docName: name,
-      textString: text,
-      htmlString: html,
+      docName: name.value,
+      textString: text.value,
+      htmlString: html.value,
       timeStamp: serverTimestamp(),
     },
-    { merge: true },
+    { merge: true }
   );
-};
+}
 
 let HTMLonly = false;
 let MDonly = false;
