@@ -1,38 +1,20 @@
 <script setup>
 import { ref } from "vue";
 import download from "@/lib/download.js";
+import createNewDocument from "@/lib/createNewDocument.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
 import "@/assets/themes/mytheme/theme.scss";
 
-//firebase imports
-import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
-import { db } from "@/main"; //firestore instance
-
 const html = ref("");
 const text = ref("");
 const name = ref("Untitled Document");
 
-async function createNotes() {
-  alert("Hopefully adding to firebase");
-  const notesRef = doc(collection(db, "notes"));
-  await setDoc(
-    notesRef,
-    {
-      //data to write to the document
-      docName: name.value,
-      textString: text.value,
-      htmlString: html.value,
-      timeStamp: serverTimestamp(),
-    },
-    { merge: true }
-  );
-}
-
 let HTMLonly = false;
 let MDonly = false;
+
 const downloadItems = [
   {
     label: ".HTML Only",
@@ -67,6 +49,10 @@ function initiateDownload() {
       download(text.value, name.value, "md");
       break;
   }
+}
+
+function addToDatabase() {
+  createNewDocument(name.value, text.value, html.value);
 }
 </script>
 
@@ -115,9 +101,9 @@ export default {
   <div class="markdown">
     <span class="p-buttonset">
       <Button
-        label="New Document"
+        label="Create"
         icon="pi pi-file"
-        @click="createNotes"
+        @click="toggleEditableDocument"
       ></Button>
       <SplitButton
         label="Download"
@@ -146,7 +132,12 @@ export default {
       ></EditableDocument>
     </div>
 
-    <span class="p-buttonset">
+    <span class="p-buttonset" v-if="showEditableDocument">
+      <Button
+        label="Save as New"
+        icon="pi pi-file"
+        @click="addToDatabase"
+      ></Button>
       <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
         @click="toggleDialog"
