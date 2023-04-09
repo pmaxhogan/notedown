@@ -13,11 +13,6 @@ const contentToRender = ref(
 );
 const documentName = ref("Untitled Document");
 
-watchEffect(() => {
-  emit("text", contentToRender.value);
-  emit("name", documentName.value);
-});
-
 const props = defineProps({
   renderText: {
     type: Boolean,
@@ -34,6 +29,7 @@ const invalidDocumentName = computed(() => {
 });
 
 watchEffect(() => {
+  emit("text", contentToRender.value);
   if (!invalidDocumentName.value) {
     emit("name", documentName.value);
   }
