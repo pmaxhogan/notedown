@@ -1,10 +1,11 @@
-<script setup> 
+<script setup>
 import { useCurrentUser, useDocument } from "vuefire";
 import { db } from "@/main";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { collection, doc, setDoc } from "firebase/firestore";
+import { collection, doc, setDoc, getDoc } from "firebase/firestore";
 import { onMounted, ref, watch } from "vue";
-import LoginView from "../views/LoginView.vue"
+// eslint-disable-next-line no-unused-vars
+import LoginView from "../views/LoginView.vue";
 
 //LOGIN
 const provider = new GoogleAuthProvider();
@@ -31,16 +32,12 @@ async function loginWithGoogle() {
 //DROPDOWN
 function dropdown() {
   const element = document.getElementById("dropdown");
-  if(element.style.display === "none"){
+  if (element.style.display === "none") {
     element.style.display = "block";
-  }
-  else{
+  } else {
     element.style.display = "none";
   }
 }
-
-
-
 
 // ref that stores the user document as an object from firebase, or null if not logged in etc
 let userDocRef = ref(null);
@@ -59,16 +56,14 @@ onMounted(() => {
 </script>
 
 <template>
-  
   <header>
-    
     <h1>NoteDown <font-awesome-icon icon="fa-solid fa-pen-to-square" /></h1>
     <nav class="navigation-items">
       <ul>
         <li><RouterLink to="/" class="text">Home</RouterLink></li>
         <li><RouterLink to="/about" class="text">About</RouterLink></li>
         <li><RouterLink to="/markdown" class="text">Markdown</RouterLink></li>
-        <li v-if="user">  
+        <li v-if="user">
           <img
             v-if="userDocRef?.value?.photoURL"
             :alt="userDocRef?.value?.name"
@@ -78,37 +73,44 @@ onMounted(() => {
         <li>
           <div v-if="!user">
             <div class="userProfile">
-             <font-awesome-icon class="icon" icon="fa-solid fa-user" @click="dropdown()"/> 
+              <font-awesome-icon
+                class="icon"
+                icon="fa-solid fa-user"
+                @click="dropdown()"
+              />
             </div>
-            
 
             <div class="dropdown-wrapper" id="dropdown">
-            <div class="dropdown">
-            <button type="submit" @click="loginWithGoogle()"> Sign in with <font-awesome-icon icon="fa-brands fa-google" class="brand" /></button>
-            <button type="submit"> Sign in with <font-awesome-icon icon="fa-brands fa-github" class="brand" /></button>
+              <div class="dropdown">
+                <button type="submit" @click="loginWithGoogle()">
+                  Sign in with
+                  <font-awesome-icon icon="fa-brands fa-google" class="brand" />
+                </button>
+                <button type="submit">
+                  Sign in with
+                  <font-awesome-icon icon="fa-brands fa-github" class="brand" />
+                </button>
+              </div>
+            </div>
           </div>
-
-      </div>
-          </div>
-          <RouterLink v-else to="/logout" class="text" >Logout</RouterLink>
+          <RouterLink v-else to="/logout" class="text">Logout</RouterLink>
         </li>
       </ul>
     </nav>
   </header>
-  <body>
-  </body>
+  <body></body>
 </template>
 
 ...
 <style lang="scss">
-@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Montserrat:wght@300;400;500&family=Poppins:wght@200;400;500&family=Raleway:wght@400;500&family=Rubik&display=swap');
-*{
+@import url("https://fonts.googleapis.com/css2?family=Courgette&family=Montserrat:wght@300;400;500&family=Poppins:wght@200;400;500&family=Raleway:wght@400;500&family=Rubik&display=swap");
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
-body{
-  background-color: #FFF9FE;
+body {
+  background-color: #fff9fe;
 }
 img {
   width: 30px;
@@ -123,50 +125,50 @@ img {
 header {
   display: flex;
   justify-content: space-between;
-  background-color: #A982C6;
+  background-color: #a982c6;
   align-items: center;
   height: 6.4vh;
   padding-left: 28px;
   padding-right: 28px;
-  .icon{
+  .icon {
     font-size: 20px;
   }
-  h1{
-    font-family: 'Courgette', cursive;
+  h1 {
+    font-family: "Courgette", cursive;
     font-size: 27px;
   }
-  nav ul{
+  nav ul {
     list-style-type: none;
   }
-  nav ul li{
+  nav ul li {
     display: inline-block;
     margin-left: 42px;
     font-size: 16px;
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-weight: 400;
   }
-  .text:hover{
-    color: #FFF9FE;
+  .text:hover {
+    color: #fff9fe;
   }
-  .text{
+  .text {
     text-decoration: none;
     color: black;
   }
-  .userProfile{
+  .userProfile {
     cursor: pointer;
   }
 }
-.dropdown-wrapper{
+.dropdown-wrapper {
   display: none;
   background-color: #e5d0f5;
   border-radius: 10px;
-  height:160px;
+  height: 160px;
   width: 240px;
   position: absolute;
   top: 58px;
-  right:25px;
+  right: 25px;
 
-  .dropdown{
+  .dropdown {
     display: block;
     height: 100%;
     display: flex;
@@ -174,7 +176,7 @@ header {
     align-items: center;
     justify-content: center;
 
-    button{
+    button {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -186,21 +188,18 @@ header {
       border-radius: 20px;
       border: none;
       background-color: #322467;
-      color: #FFFF;
+      color: #ffff;
       font-size: 16px;
-      font-family:'Montserrat', sans-serif;
+      font-family: "Montserrat", sans-serif;
       font-weight: 500;
       cursor: pointer;
-      
-      .brand{
+
+      .brand {
         padding-left: 7px;
       }
-
-
     }
   }
 }
-
 
 nav a.router-link-exact-active {
   color: var(--color-text);
@@ -218,6 +217,4 @@ nav a {
 nav a:first-of-type {
   border: 0;
 }
-
-
 </style>

@@ -1,8 +1,9 @@
 <template>
-
+  <h1></h1>
 </template>
 
 <script setup>
+// eslint-disable-next-line no-unused-vars
 import LoginForm from "@/components/LoginForm.vue";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useCurrentUser } from "vuefire";
@@ -16,6 +17,7 @@ const user = useCurrentUser();
 
 // here we can export reusable database references
 
+// eslint-disable-next-line no-unused-vars
 async function loginWithGoogle() {
   await signInWithPopup(auth, provider);
   const userDocRef = doc(collection(db, "users"), user?.value?.uid ?? "");
