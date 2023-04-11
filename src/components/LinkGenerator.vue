@@ -1,13 +1,15 @@
 <script>
+import getShareableLink from "@/lib/getShareableLink.js";
 export default {
   data() {
     return {
-      pseudoLink: "https://notedown-web.web.app/markdown",
+      link: "",
     };
   },
   methods: {
     sendShareableLink() {
-      this.$emit("shareableLink", this.pseudoLink);
+      this.link = getShareableLink();
+      this.$emit("shareableLink", this.link);
       //emit is used to send data from child component to parent
     },
   },
