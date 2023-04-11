@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 //Helper Functions
 import download from "@/lib/download.js";
@@ -11,8 +11,39 @@ import deleteDocument from "@/lib/deleteDocument.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
-//import Tree from "primevue/tree";
+
 import "@/assets/themes/mytheme/theme.scss";
+
+import Tree from "primevue/tree";
+//firestore imports
+import { useCurrentUser } from "vuefire";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/main"; //firestore instance
+
+const nodes = ref([
+  {
+    key: "",
+    label: "Default",
+    icon: "pi pi-folder",
+    children: [],
+  },
+]);
+
+const subColPath = "users/" + useCurrentUser()?.value?.uid + "/Default";
+onMounted(async () => {
+  let tempNodes = [];
+  const querySnapshot = await getDocs(collection(db, subColPath));
+  querySnapshot.forEach((doc) => {
+    // doc.data() is never undefined for query doc snapshots
+    console.log(doc.id, " => ", doc.data());
+    const localNode = {
+      key: doc.id,
+      label: doc.data().docName,
+    };
+    tempNodes.push(localNode);
+  });
+  nodes.value.children = tempNodes;
+});
 
 const html = ref("");
 const text = ref("");
@@ -68,7 +99,6 @@ async function addToDatabase() {
 }
 
 function updateInDatabase() {
-  //updateDocument(name.value, text.value, html.value, currDocRef.value);
   updateDocument(text.value, html.value, currDocRef.value);
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
@@ -122,19 +152,14 @@ export default {
 
 <template>
   <div class="markdown">
-    <span class="p-buttonset">
-      <Button
-        label="Create"
-        icon="pi pi-file"
-        @click="toggleEditableDocument"
-      ></Button>
-      <SplitButton
-        label="Download"
-        icon="pi pi-download"
-        @click="initiateDownload"
-        :model="downloadItems"
-      ></SplitButton>
-    </span>
+    <Tree :value="nodes" class="w-full md:w-30rem">
+      <template #default="slotProps">
+        <b>{{ slotProps.node.label }}</b>
+      </template>
+      <template #url="slotProps">
+        <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
+      </template>
+    </Tree>
 
     <div>
       <EditableDocument
@@ -159,6 +184,12 @@ export default {
         @click="deleteInDatabase"
       ></Button>
       <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
+      <SplitButton
+        label="Download"
+        icon="pi pi-download"
+        @click="initiateDownload"
+        :model="downloadItems"
+      ></SplitButton>
       <Button
         @click="toggleDialog"
         label="Share"
