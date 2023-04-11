@@ -229,6 +229,7 @@ export default {
       </template>
       <LinkGenerator
         @shareableLink="(newLink) => (link = newLink)"
+        :docId="currDocRef"
       ></LinkGenerator>
       <textarea
         v-if="!copyConfirmed"

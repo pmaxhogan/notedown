@@ -4,7 +4,6 @@
 
 <script setup>
 // eslint-disable-next-line no-unused-vars
-import LoginForm from "@/components/LoginForm.vue";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { useCurrentUser } from "vuefire";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
@@ -31,5 +30,4 @@ async function loginWithGoogle() {
     });
   }
 }
-
 </script>
