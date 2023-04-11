@@ -1,7 +1,7 @@
 <script setup>
 import * as DOMPurify from "dompurify";
 import { parse } from "marked";
-import { ref, watchEffect } from "vue";
+import { ref, watch } from "vue";
 
 const emit = defineEmits(["html"]);
 
@@ -21,7 +21,9 @@ if (props.content.length > MAX_CONTENT_LENGTH) {
 
 const output = ref("");
 
-watchEffect(() => {
+watch(() => props.content, update);
+
+function update() {
   output.value = sanitize(parse(props.content));
   emit("html", output.value);
   window.requestAnimationFrame(() => {
@@ -30,7 +32,8 @@ watchEffect(() => {
       window.MathJax.typeset();
     }
   });
-});
+}
+update();
 </script>
 
 <template>
