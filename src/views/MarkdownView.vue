@@ -35,8 +35,8 @@ onMounted(() => {
   //reference to the subcollection
   const cRef = collection(
     db,
-    "users/" + useCurrentUser()?.value?.uid + "/Default"
-  ); 
+    "users/" + useCurrentUser()?.value?.uid + "/docs"
+  );
 
   //sorts the documents in subcollection in order of creation/update
   const q = query(cRef, orderBy("timeStamp", "asc"));
@@ -197,7 +197,12 @@ export default {
         icon="pi pi-file"
         @click="addToDatabase"
       ></Button>
-      <Button label="Save" icon="pi pi-file" @click="updateInDatabase"></Button>
+      <Button
+        :disabled="!currDocRef"
+        icon="pi pi-file"
+        label="Save"
+        @click="updateInDatabase"
+      ></Button>
       <Button
         label="Delete"
         icon="pi pi-trash"

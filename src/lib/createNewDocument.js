@@ -6,7 +6,7 @@ import { db } from "@/main"; //firestore instance
 export default async function createNewDocument(docName, text, html) {
   const userID = useCurrentUser()?.value?.uid;
   //create new document
-  const newDocRef = doc(collection(db, "users/" + userID + "/Default"));
+  const newDocRef = doc(collection(db, "users/" + userID + "/docs"));
   await setDoc(newDocRef, {
     //data to write to the document
     docName: docName,

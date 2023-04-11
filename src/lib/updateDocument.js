@@ -12,7 +12,7 @@ export default async function updateDocument(text, html, documentID) {
   //get reference to currently open document
   const userID = useCurrentUser()?.value?.uid;
   const currDocRef = doc(
-    collection(db, "users/" + userID + "/Default"),
+    collection(db, "users/" + userID + "/docs"),
     documentID
   );
 
