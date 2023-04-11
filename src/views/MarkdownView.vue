@@ -1,7 +1,11 @@
 <script setup>
 import { ref, onMounted } from "vue";
 
-//Helper Functions
+//style imports
+import "@/assets/themes/mytheme/theme.scss";
+import "@/assets/styles/gradient-background.scss";
+
+//Database Helper Functions
 import download from "@/lib/download.js";
 import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
@@ -11,48 +15,61 @@ import deleteDocument from "@/lib/deleteDocument.js";
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
-
-import "@/assets/themes/mytheme/theme.scss";
-
 import Tree from "primevue/tree";
+
 //firestore imports
 import { useCurrentUser } from "vuefire";
-import { collection, getDocs } from "firebase/firestore";
+// eslint-disable-next-line prettier/prettier
+import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
 import { db } from "@/main"; //firestore instance
 
 const nodes = ref([
   {
-    key: "",
+    key: "0",
     label: "Default",
     icon: "pi pi-folder",
     children: [],
   },
 ]);
 
-const subColPath = "users/" + useCurrentUser()?.value?.uid + "/Default";
-onMounted(async () => {
-  let tempNodes = [];
-  const querySnapshot = await getDocs(collection(db, subColPath));
-  querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
-    const localNode = {
-      key: doc.id,
-      label: doc.data().docName,
-    };
-    tempNodes.push(localNode);
+onMounted(() => {
+  //reference to the subcollection
+  const cRef = collection(
+    db,
+    "users/" + useCurrentUser()?.value?.uid + "/Default"
+  ); 
+
+  //sorts the documents in subcollection in order of creation/update
+  const q = query(cRef, orderBy("timeStamp", "asc"));
+
+  //listen for changes to documents in a collection
+  onSnapshot(q, (snapshot) => {
+    //loop through collection to identify changes then push changes as new tree nodes
+    snapshot.docChanges().forEach((change) => {
+      //push change onto stack
+      if (change.type === "added") {
+        nodes.value[0].children.push({
+          key: change.doc.id,
+          label: change.doc.data().docName,
+        });
+      }
+      //pop change from stack
+      if (change.type === "removed") {
+        nodes.value[0].children.pop();
+      }
+      console.log(nodes.value[0].children);
+    });
   });
-  nodes.value.children = tempNodes;
 });
+
+const currDocRef = ref("");
 
 const html = ref("");
 const text = ref("");
 const name = ref("Untitled Document");
 
-const currDocRef = ref("");
 let HTMLonly = false;
 let MDonly = false;
-
 const downloadItems = [
   {
     label: ".HTML Only",
@@ -112,7 +129,6 @@ function deleteInDatabase() {
 <script>
 import EditableDocument from "@/components/EditableDocument.vue";
 import LinkGenerator from "@/components/LinkGenerator.vue";
-
 export default {
   data() {
     return {
@@ -129,7 +145,6 @@ export default {
     EditableDocument,
     LinkGenerator,
   },
-
   methods: {
     copy() {
       this.$refs.clone.focus();
@@ -149,17 +164,23 @@ export default {
   },
 };
 </script>
-
 <template>
   <div class="markdown">
-    <Tree :value="nodes" class="w-full md:w-30rem">
-      <template #default="slotProps">
-        <b>{{ slotProps.node.label }}</b>
-      </template>
-      <template #url="slotProps">
-        <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
-      </template>
-    </Tree>
+    <div>
+      <Tree :value="nodes" class="w-full md:w-30rem">
+        <template #default="slotProps">
+          <b>{{ slotProps.node.label }}</b>
+        </template>
+      </Tree>
+    </div>
+
+    <span class="p-buttonset">
+      <Button
+        label="Create"
+        icon="pi pi-file"
+        @click="toggleEditableDocument"
+      ></Button>
+    </span>
 
     <div>
       <EditableDocument
@@ -183,13 +204,13 @@ export default {
         icon="pi pi-trash"
         @click="deleteInDatabase"
       ></Button>
-      <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <SplitButton
         label="Download"
         icon="pi pi-download"
         @click="initiateDownload"
         :model="downloadItems"
       ></SplitButton>
+      <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
         @click="toggleDialog"
         label="Share"
@@ -202,11 +223,9 @@ export default {
         <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
         <h3 v-else>Invite Others to View Your NoteDown</h3>
       </template>
-
       <LinkGenerator
         @shareableLink="(newLink) => (link = newLink)"
       ></LinkGenerator>
-
       <textarea
         v-if="!copyConfirmed"
         class="displayLinkArea"
@@ -215,7 +234,6 @@ export default {
         readonly
         :value="link"
       ></textarea>
-
       <template #footer>
         <Button
           v-if="copyConfirmed"
@@ -230,8 +248,6 @@ export default {
 </template>
 
 <style lang="scss">
-@import "@/assets/styles/gradient-background.scss";
-
 textarea {
   width: 100%;
   height: 100px;
@@ -246,17 +262,13 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
-.treeFormat {
-  background-color: #e2d5ec;
-  border-color: #e2d5ec;
-}
 
 .markdown {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem;
-    background-color: #ffffff;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-  }
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
 </style>
