@@ -2,10 +2,9 @@
 import { useCurrentUser, useDocument } from "vuefire";
 import { db } from "@/main";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { collection, doc, setDoc, getDoc } from "firebase/firestore";
+import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { onMounted, ref, watch } from "vue";
 // eslint-disable-next-line no-unused-vars
-import LoginView from "../views/LoginView.vue";
 
 //LOGIN
 const provider = new GoogleAuthProvider();
@@ -98,7 +97,6 @@ onMounted(() => {
       </ul>
     </nav>
   </header>
-  <body></body>
 </template>
 
 ...

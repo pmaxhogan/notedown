@@ -1,9 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { onMounted, ref } from "vue";
 
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
-import "@/assets/styles/gradient-background.scss";
 
 //Database Helper Functions
 import download from "@/lib/download.js";
@@ -20,7 +19,7 @@ import Tree from "primevue/tree";
 //firestore imports
 import { useCurrentUser } from "vuefire";
 // eslint-disable-next-line prettier/prettier
-import { collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/main"; //firestore instance
 
 const nodes = ref([
@@ -261,14 +260,5 @@ textarea {
   font-size: 16px;
   background-color: #fff9fe;
   border-color: #fff9fe;
-}
-
-.markdown {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  background-color: #ffffff;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
 }
 </style>

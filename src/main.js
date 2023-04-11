@@ -4,8 +4,6 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
-import "@/assets/styles/gradient-background.scss";
-
 
 import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -16,6 +14,14 @@ import "./assets/main.css";
 import { initializeApp } from "firebase/app";
 import { VueFire, VueFireAuth } from "vuefire";
 import { getFirestore } from "firebase/firestore";
+import {
+  FontAwesomeIcon,
+  FontAwesomeLayers,
+  FontAwesomeLayersText,
+} from "@fortawesome/vue-fontawesome";
+import { library } from "@fortawesome/fontawesome-svg-core";
+import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 // ... other firebase imports
 
@@ -51,22 +57,13 @@ app.use(VueFire, {
   ],
 });
 
-import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from "@fortawesome/vue-fontawesome";
-import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPenToSquare } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
-import { faGithub } from "@fortawesome/free-brands-svg-icons";
-
 app.component("font-awesome-icon", FontAwesomeIcon);
-app.component('font-awesome-layers', FontAwesomeLayers)
-app.component('font-awesome-layers-text', FontAwesomeLayersText)
+app.component("font-awesome-layers", FontAwesomeLayers);
+app.component("font-awesome-layers-text", FontAwesomeLayersText);
 
 library.add(faPenToSquare);
 library.add(faUser);
 library.add(faGithub);
 library.add(faGoogle);
-
-
 
 app.mount("#app");

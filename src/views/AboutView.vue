@@ -64,24 +64,6 @@
 </template>
 
 <style>
-/*body {
-    background: linear-gradient(
-      to right,
-      #322467 0%,
-      #322467 25%,
-      transparent 25%,
-      transparent 75%,
-      #322467 75%,
-      #322467 100%
-    );
-  } */
-.about {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: left;
-}
-
 h1 {
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
