@@ -230,6 +230,8 @@ export default {
 </template>
 
 <style lang="scss">
+@import "@/assets/styles/gradient-background.scss";
+
 textarea {
   width: 100%;
   height: 100px;
@@ -248,4 +250,13 @@ textarea {
   background-color: #e2d5ec;
   border-color: #e2d5ec;
 }
+
+.markdown {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+  }
 </style>

@@ -4,6 +4,8 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
+import "@/assets/styles/gradient-background.scss";
+
 
 import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
