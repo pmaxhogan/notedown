@@ -2,12 +2,18 @@ import { mount } from "@vue/test-utils";
 import LinkGenerator from "../components/LinkGenerator.vue";
 import { expect, test } from "vitest";
 
-const urlFragment = "https://notedown-web.web.app/viewdoc/"; 
+const urlFragment = "/viewdoc/";
 
 test("Component provides URL that routes to an existing Vue View", async () => {
   expect(LinkGenerator).toBeTruthy();
 
-  const wrapper = mount(LinkGenerator);
+  const wrapper = mount(LinkGenerator, {
+    props: {
+      docId: "1234567890",
+    },
+  });
+  // call sendShareableLink
+  await wrapper.vm.sendShareableLink();
 
   expect(wrapper.emitted().shareableLink[0].toString()).toContain(urlFragment);
 });

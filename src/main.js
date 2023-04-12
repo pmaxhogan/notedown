@@ -10,8 +10,6 @@ import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 
 import "./assets/main.css";
-
-import { initializeApp } from "firebase/app";
 import { VueFire, VueFireAuth } from "vuefire";
 import { getFirestore } from "firebase/firestore";
 import {
@@ -22,18 +20,11 @@ import {
 import { library } from "@fortawesome/fontawesome-svg-core";
 import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
+import initFirebase from "@/lib/initFirebase";
 
 // ... other firebase imports
 
-export const firebaseApp = initializeApp({
-  apiKey: "AIzaSyCF5sbB4BmE12HB-lh2bytiQmuH0W7O7jA",
-  authDomain: "notedown-web.firebaseapp.com",
-  projectId: "notedown-web",
-  storageBucket: "notedown-web.appspot.com",
-  messagingSenderId: "153264433971",
-  appId: "1:153264433971:web:9c0bbec8fb473221feac46",
-  measurementId: "G-ZBY9KG9HS9",
-});
+export const firebaseApp = initFirebase();
 
 // used for the firestore refs
 export const db = getFirestore(firebaseApp);
