@@ -16,7 +16,7 @@ export default {
   methods: {
     async sendShareableLink() {
       this.link = await getShareableLink(this.docId);
-      this.$emit("shareableLink", this.link);
+      this.$emit("shareableLink", this.link.toString());
       //emit is used to send data from child component to parent
     },
   },

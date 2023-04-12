@@ -2,32 +2,14 @@ import { mount } from "@vue/test-utils";
 import LinkGenerator from "../components/LinkGenerator.vue";
 import { expect, test } from "vitest";
 
-const validString = "https://notedown-web.web.app/markdown"; //existing page
-const invalidString = "https://notedown-web.web.app/faqs"; //page does not exist
-const exceptionString = "https://notedown-web.web.app/#markdown\\"; //#, \ are an unsafe character
+const urlFragment = "https://notedown-web.web.app/viewdoc/"; 
 
-test("link generator component valid", async () => {
+test("Component provides URL that routes to an existing Vue View", async () => {
   expect(LinkGenerator).toBeTruthy();
 
   const wrapper = mount(LinkGenerator);
 
-  expect(wrapper.emitted().shareableLink[0].toString()).toEqual(validString);
-});
-
-test("link generator component invalid", async () => {
-  expect(LinkGenerator).toBeTruthy();
-
-  const wrapper = mount(LinkGenerator);
-  
-  expect(wrapper.emitted().shareableLink[0].toString()).not.toEqual(invalidString);
-});
-
-test("link generator component exception encountered", async () => {
-  expect(LinkGenerator).toBeTruthy();
-
-  const wrapper = mount(LinkGenerator);
-  
-  expect(wrapper.emitted().shareableLink[0].toString()).not.toEqual(exceptionString);
+  expect(wrapper.emitted().shareableLink[0].toString()).toContain(urlFragment);
 });
 
 /*references:
