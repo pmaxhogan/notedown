@@ -2,9 +2,6 @@
 import { collection, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { useCurrentUser } from "vuefire";
 import { db } from "@/main"; //firestore instance
-import initFirebase from "@/lib/initFirebase";
-
-initFirebase();
 
 export default async function createNewDocument(docName, text, html) {
   const userID = useCurrentUser()?.value?.uid;
