@@ -1,8 +1,11 @@
 import { mount } from "@vue/test-utils";
 import LinkGenerator from "../components/LinkGenerator.vue";
+import initFirebase from "../lib/initFirebase.js";
 import { expect, test } from "vitest";
 
 const urlFragment = "/viewdoc/";
+
+initFirebase();
 
 test("Component provides URL that routes to an existing Vue View", async () => {
   expect(LinkGenerator).toBeTruthy();
