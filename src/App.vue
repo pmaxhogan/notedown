@@ -4,10 +4,21 @@
 import { RouterView, useRoute, useRouter } from "vue-router";
 import AppHeader from "@/components/AppHeader.vue";
 import { useCurrentUser } from "vuefire";
+import { onMounted, watch } from "vue";
 
 const router = useRouter();
 const route = useRoute();
 const user = useCurrentUser();
+
+onMounted(() => {
+  watch(user, (user, prevUser) => {
+    console.log("user changed", user, prevUser);
+    if (!user && route.path !== "/about") {
+      // user logged out
+      router.push("/about");
+    }
+  });
+});
 </script>
 
 <template>

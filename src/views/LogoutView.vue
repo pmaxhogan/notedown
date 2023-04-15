@@ -10,6 +10,6 @@ const router = useRouter();
 
 const auth = getAuth();
 signOut(auth).then(() => {
-  router.push("/login");
+  router.push("/about");
 });
 </script>

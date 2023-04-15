@@ -59,9 +59,13 @@ onMounted(() => {
     <h1>NoteDown <font-awesome-icon icon="fa-solid fa-pen-to-square" /></h1>
     <nav class="navigation-items">
       <ul>
-        <li><RouterLink to="/" class="text">Home</RouterLink></li>
+        <li><RouterLink v-if="user" class="text" to="/">Home</RouterLink></li>
         <li><RouterLink to="/about" class="text">About</RouterLink></li>
-        <li><RouterLink to="/markdown" class="text">Markdown</RouterLink></li>
+        <li>
+          <RouterLink v-if="user" class="text" to="/markdown"
+            >Markdown</RouterLink
+          >
+        </li>
         <li v-if="user">
           <img
             v-if="userDocRef?.value?.photoURL"
@@ -134,6 +138,7 @@ header {
   h1 {
     font-family: "Courgette", cursive;
     font-size: 27px;
+    margin: 0;
   }
   nav ul {
     list-style-type: none;
