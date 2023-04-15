@@ -18,7 +18,7 @@ import {
   FontAwesomeLayersText,
 } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPenToSquare, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import initFirebase from "@/lib/initFirebase";
 
@@ -56,5 +56,6 @@ library.add(faPenToSquare);
 library.add(faUser);
 library.add(faGithub);
 library.add(faGoogle);
+library.add(faRightFromBracket)
 
 app.mount("#app");

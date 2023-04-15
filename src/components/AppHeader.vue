@@ -5,20 +5,15 @@ import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { collection, doc, getDoc, setDoc } from "firebase/firestore";
 import { onMounted, ref, watch } from "vue";
 // eslint-disable-next-line no-unused-vars
-
 //LOGIN
 const provider = new GoogleAuthProvider();
 const auth = getAuth();
-
 const user = useCurrentUser();
-
 // here we can export reusable database references
-
 async function loginWithGoogle() {
   await signInWithPopup(auth, provider);
   const userDocRef = doc(collection(db, "users"), user?.value?.uid ?? "");
   const userDoc = await getDoc(userDocRef);
-
   if (!userDoc.exists()) {
     await setDoc(userDocRef, {
       name: user?.value?.displayName,
@@ -27,7 +22,6 @@ async function loginWithGoogle() {
     });
   }
 }
-
 //DROPDOWN
 function dropdown() {
   const element = document.getElementById("dropdown");
@@ -37,12 +31,9 @@ function dropdown() {
     element.style.display = "none";
   }
 }
-
 // ref that stores the user document as an object from firebase, or null if not logged in etc
 let userDocRef = ref(null);
-
 console.log(userDocRef?.value, user?.value?.uid);
-
 onMounted(() => {
   watch(user, (user) => {
     if (user?.uid) {
@@ -53,7 +44,6 @@ onMounted(() => {
   });
 });
 </script>
-
 <template>
   <header>
     <h1>NoteDown <font-awesome-icon icon="fa-solid fa-pen-to-square" /></h1>
@@ -67,25 +57,17 @@ onMounted(() => {
           >
         </li>
         <li v-if="user">
-          <img
-            v-if="userDocRef?.value?.photoURL"
-            :alt="userDocRef?.value?.name"
-            :src="userDocRef?.value?.photoURL"
-          />
-        </li>
-        <li>
-          <div v-if="!user">
-            <div class="userProfile">
+          <div class="userProfile">
               <font-awesome-icon
                 class="icon"
                 icon="fa-solid fa-user"
                 @click="dropdown()"
               />
             </div>
-
-            <div class="dropdown-wrapper" id="dropdown">
-              <div class="dropdown">
-                <button type="submit" @click="loginWithGoogle()">
+        </li>
+        <li>
+          <div v-if="!user">
+            <button class="google" type="submit" @click="loginWithGoogle()">
                   Sign in with
                   <font-awesome-icon icon="fa-brands fa-google" class="brand" />
                 </button>
@@ -93,19 +75,23 @@ onMounted(() => {
                   Sign in with
                   <font-awesome-icon icon="fa-brands fa-github" class="brand" />
                 </button>
-              </div>
+            </div>
+          <div class="dropdown-wrapper" id="dropdown" v-else>
+            <div class="dropdown">
+              <button>
+                <RouterLink to="/logout" class="logoutBTN">Logout <font-awesome-icon class="icon" icon="fa-solid fa-right-from-bracket" /></RouterLink>
+              </button>
             </div>
           </div>
-          <RouterLink v-else to="/logout" class="text">Logout</RouterLink>
+          
         </li>
       </ul>
     </nav>
   </header>
 </template>
-
 ...
 <style lang="scss">
-@import url("https://fonts.googleapis.com/css2?family=Courgette&family=Montserrat:wght@300;400;500&family=Poppins:wght@200;400;500&family=Raleway:wght@400;500&family=Rubik&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Dongle:wght@400;700&family=Fira+Sans:wght@500&family=Montserrat:ital,wght@0,400;0,500;1,600&family=Nunito:wght@500&family=Poppins:wght@400;500&display=swap');
 * {
   margin: 0;
   padding: 0;
@@ -123,7 +109,6 @@ img {
   margin: 0 0.5rem;
   border: 1px solid black;
 }
-
 header {
   display: flex;
   justify-content: space-between;
@@ -143,17 +128,20 @@ header {
   nav ul {
     list-style-type: none;
   }
-  nav ul li {
+  nav ul li{
     display: inline-block;
-    margin-left: 42px;
     font-size: 16px;
-    font-family: "Montserrat", sans-serif;
+    font-family: 'Montserrat', sans-serif;
     font-weight: 400;
+    .text{
+      margin-right: 42px;
+    }
   }
   .text:hover {
     color: #fff9fe;
   }
   .text {
+    font-family: 'Montserrat', sans-serif;
     text-decoration: none;
     color: black;
   }
@@ -165,12 +153,11 @@ header {
   display: none;
   background-color: #e5d0f5;
   border-radius: 10px;
-  height: 160px;
-  width: 240px;
+  height: 90px;
+  width: 220px;
   position: absolute;
   top: 58px;
   right: 25px;
-
   .dropdown {
     display: block;
     height: 100%;
@@ -178,46 +165,73 @@ header {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-
-    button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      margin-bottom: 10px;
-      margin-top: 10px;
-      width: 180px;
-      height: 38px;
-      border-radius: 20px;
-      border: none;
-      background-color: #322467;
-      color: #ffff;
-      font-size: 16px;
-      font-family: "Montserrat", sans-serif;
+    .icon{
+      margin-left: 6px;
+      font-size: 14.6px;
+    }
+    .logoutBTN{
+      font-family: 'Nunito', sans-serif;
+      //font-family: 'Dongle', sans-serif;
+      //font-family: 'Montserrat', sans-serif;
       font-weight: 500;
-      cursor: pointer;
-
-      .brand {
-        padding-left: 7px;
-      }
+      font-size: 14.6px;
+      text-decoration: none;
+      color: white;
     }
   }
 }
-
 nav a.router-link-exact-active {
   color: var(--color-text);
 }
-
 nav a.router-link-exact-active:hover {
   background-color: transparent;
 }
-
 nav a {
   display: inline-block;
   border-left: 1px solid var(--color-border);
 }
-
 nav a:first-of-type {
   border: 0;
 }
+nav ul li button{
+  align-items: center;
+  height: 28px;
+  width: 130px;
+  border: none;
+  border-radius: 15px;
+  background-color: #322467;
+  color: #FFFF;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  font-size: 14.2px;
+  padding: 0px 10px 0px 10px;
+  cursor: pointer;
+  .brand{
+    margin-left: 6px;
+  }
+
+}
+.google{
+  margin-right: 42px;
+}
+// button {
+//       display: flex;
+//       justify-content: center;
+//       align-items: center;
+//       margin-bottom: 10px;
+//       margin-top: 10px;
+//       width: 180px;
+//       height: 38px;
+//       border-radius: 20px;
+//       border: none;
+//       background-color: #322467;
+//       color: #ffff;
+//       font-size: 16px;
+//       font-family: "Montserrat", sans-serif;
+//       font-weight: 500;
+//       cursor: pointer;
+//       .brand {
+//         padding-left: 7px;
+//       }
+//     }
 </style>

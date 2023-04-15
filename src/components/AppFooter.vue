@@ -2,6 +2,7 @@
 import { computed } from "vue";
 
 export default {
+  
   setup() {
     const year = computed(() => new Date().getFullYear());
     return { year };

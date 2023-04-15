@@ -44,13 +44,10 @@
       <h2>Contact Us</h2>
       <div class="contact-info">
         <div class="info-column">
-          <h3>Email</h3>
-          <p>notedownadmin@notedown.com</p>
-          <h3>Phone</h3>
-          <p>+1 (123) 456-7890</p>
+          <p>Email: notedownadmin@notedown.com</p>
+          <p>Phone: +1 (123) 456-7890</p>
         </div>
         <div class="info-column">
-          <h3>Address</h3>
           <p>
             1234 Main Street<br />
             Suite 567<br />
@@ -64,35 +61,53 @@
 </template>
 
 <style>
-h1 {
+@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Dongle:wght@400;700&family=Fira+Sans:wght@500&family=Montserrat:ital,wght@0,400;0,500;1,600&family=Nunito:wght@500&family=Poppins:wght@400;500&display=swap');
+*{
+  font-family: 'Montserrat', sans-serif;
+}
+.about h1 {
   font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 14px;
 }
 
 h2 {
-  font-size: 1.75rem;
-  margin-bottom: 0.75rem;
+  font-size: 1.4rem;
+  margin-bottom: 1rem;
 }
-
+h3{
+  margin-bottom: 0.5rem;
+}
+.about{
+  padding: 40px;
+}
 .subsection {
   margin-bottom: 2rem;
 }
 
-p {
-  font-size: 1rem;
+.subsection p {
+  font-size: 0.7rem;
   line-height: 1.5;
   margin-bottom: 1rem;
   text-align: left;
+  padding-left: 18px;
+  padding-right: 18px;
 }
 
 .contact-us {
   margin-top: 3rem;
 }
+.contact-us p{
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+  padding-left: 18px;
+  padding-right: 18px;
+}
 
 .contact-info {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  gap: 3.6rem;
 }
 
 .info-column {
