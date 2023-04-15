@@ -1,5 +1,4 @@
 import { getAuth } from "firebase/auth";
-import initFirebase from "@/lib/initFirebase";
 
 export default async function getShareableLink(documentID) {
   const currentUid = (await getAuth())?.currentUser?.uid;
