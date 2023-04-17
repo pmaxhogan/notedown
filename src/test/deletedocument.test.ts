@@ -9,8 +9,7 @@ const name = "Hello World";
 const text = "# Hello Markdown! $$\\frac\\alpha\\beta$$";
 const html =
   '<h1 id="markdown-test">Markdown Test!</h1> <p>(\text{M}alpha\text{thjax Test})</p> ';
-let documentID = "";
-documentID = await createNewDocument(name, text, html);
+const documentID = await createNewDocument(name, text, html);
 console.log("Document created with ID: ", documentID);
 
 test("Exisitng document deleted from Firebase", async () => {
