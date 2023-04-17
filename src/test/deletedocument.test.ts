@@ -50,7 +50,7 @@ test("Nonexistent document deleted from Firebase", async () => {
       return "Document Deletion Successful";
     })
     .catch((error) => {
-      console.log(error);
+      // console.log(error);
       return error.toString();
     });
 
