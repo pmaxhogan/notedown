@@ -321,7 +321,10 @@ function copyToClipboard() {
           v-else
           label="Close"
           icon="pi pi-times"
-          @click="showDeleteDialog = !showDeleteDialog"
+          @click="
+            showDeleteDialog = !showDeleteDialog;
+            showEditableDocument = !showEditableDocument;
+          "
         ></Button>
       </template>
     </Dialog>
