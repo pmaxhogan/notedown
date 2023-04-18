@@ -22,7 +22,6 @@ import Tree from "primevue/tree";
 
 //firestore imports
 import { useCurrentUser } from "vuefire";
-// eslint-disable-next-line prettier/prettier
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/main"; //firestore instance
 
