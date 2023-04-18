@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
@@ -35,40 +35,6 @@ const nodes = ref([
   },
 ]);
 
-//listens to changes in firebase collections
-onMounted(() => {
-  //reference to the subcollection
-  const cRef = collection(
-    db,
-    "users/" + useCurrentUser()?.value?.uid + "/docs"
-  );
-
-  //sorts the documents in subcollection in order of creation/update
-  const q = query(cRef, orderBy("timeStamp", "asc"));
-
-  //listen for changes to documents in a collection
-  onSnapshot(q, (snapshot) => {
-    //loop through collection to identify changes then push changes as new tree nodes
-    snapshot.docChanges().forEach((change) => {
-      //push change onto stack
-      if (change.type === "added") {
-        nodes.value[0].children.push({
-          key: change.doc.id,
-          icon: "pi pi-file",
-          label: change.doc.data().docName,
-          data: change.doc.data().docURL,
-          type: "url",
-        });
-      }
-      //pop change from stack
-      if (change.type === "removed") {
-        nodes.value[0].children.pop();
-      }
-      console.log(nodes.value[0].children);
-    });
-  });
-});
-
 //toggle displays
 const showShareDialog = ref(false);
 const copyConfirmed = ref(false);
@@ -93,6 +59,33 @@ const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref("Untitled Document"); //document name
 
+//listens to changes in firebase collections
+
+//reference to the subcollection
+const cRef = collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs");
+
+//sorts the documents in subcollection in order of creation/update
+//checks for changes to documents in a collection
+onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
+  //loop through collection to identify changes then push changes as new tree nodes
+  snapshot.docChanges().forEach((change) => {
+    //push change onto stack
+    if (change.type === "added") {
+      nodes.value[0].children.push({
+        key: change.doc.id,
+        icon: "pi pi-file",
+        label: change.doc.data().docName,
+        data: change.doc.data().docURL,
+        type: "url",
+      });
+    }
+    //pop change from stack
+    if (change.type === "removed") {
+      nodes.value[0].children.pop();
+    }
+    console.log(nodes.value[0].children);
+  });
+});
 //actions for document download
 const downloadItems = [
   {
