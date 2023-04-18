@@ -55,7 +55,10 @@ onMounted(() => {
       if (change.type === "added") {
         nodes.value[0].children.push({
           key: change.doc.id,
+          icon: "pi pi-file",
           label: change.doc.data().docName,
+          data: change.doc.data().docURL,
+          type: "url",
         });
       }
       //pop change from stack
@@ -67,21 +70,31 @@ onMounted(() => {
   });
 });
 
-const link = ref("");
+//toggle displays
 const showShareDialog = ref(false);
 const copyConfirmed = ref(false);
-const showEditableDocument = ref(false);
-const showHTML = ref(false);
+const showDeleteDialog = ref(false);
+const deleteConfirmed = ref(false);
+const showHTML = ref(false); //toggle HTML preview
+const showEditableDocument = ref(false); //toggle editable area
+
+//specify download format
 const HTMLonly = ref(false);
 const MDonly = ref(false);
-const showConfirmDialog = ref(false);
-const deleteConfirmed = ref(false);
-const clone = ref(null);
-const currDocRef = ref("");
-const html = ref("");
-const text = ref("");
-const name = ref("Untitled Document");
 
+//link share, copy to clipboard
+const clone = ref(null);
+const link = ref("");
+
+//document, folder references
+const currDocRef = ref("");
+
+//user inputs
+const html = ref(""); //HTML rendered string
+const text = ref(""); //plaintext string
+const name = ref("Untitled Document"); //document name
+
+//actions for document download
 const downloadItems = [
   {
     label: ".HTML Only",
@@ -103,6 +116,7 @@ const downloadItems = [
   },
 ];
 
+//actions for create new...
 const newButtonItems = [
   {
     label: "New Document",
@@ -124,6 +138,7 @@ const newButtonItems = [
   },
 ];
 
+//downloads document based on format specified
 function initiateDownload() {
   switch (true) {
     case HTMLonly:
@@ -139,6 +154,7 @@ function initiateDownload() {
   }
 }
 
+//save as new document in database
 async function addToDatabase() {
   currDocRef.value = await createNewDocument(
     name.value,
@@ -148,21 +164,25 @@ async function addToDatabase() {
   console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
 
+//save changes to document
 function updateInDatabase() {
   updateDocument(text.value, html.value, currDocRef.value);
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
 
+//permanently delete document
 function deleteInDatabase() {
   deleteDocument(currDocRef.value);
   console.log("Permanently deleted Document ID: ", currDocRef.value);
   deleteConfirmed.value = true;
 }
 
+//create new folder
 function createNewCollection() {
   //call lib method that communicates with firebase
 }
 
+//copy text to clipboard
 function copyToClipboard() {
   clone.value.focus();
   document.execCommand("copy");
@@ -173,9 +193,17 @@ function copyToClipboard() {
 <template>
   <div class="markdown">
     <div class="file-tree">
-      <Tree :value="nodes" class="w-full md:w-30rem">
+      <Tree
+        :value="nodes"
+        class="w-full md:w-30rem"
+        selectionMode="single"
+        :loading="loading"
+      >
         <template #default="slotProps">
           <b>{{ slotProps.node.label }}</b>
+        </template>
+        <template #url="slotProps">
+          <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
         </template>
       </Tree>
     </div>
@@ -192,154 +220,148 @@ function copyToClipboard() {
       :model="newButtonItems"
     ></SplitButton>
 
-    <div class="editable-area">
-      <EditableDocument
-        v-if="showEditableDocument"
-        :renderText="showHTML"
-        @html="(newHtml) => (html = newHtml)"
-        @name="(newName) => (name = newName)"
-        @text="(newText) => (text = newText)"
-      ></EditableDocument>
-    </div>
+    <EditableDocument
+      v-if="showEditableDocument"
+      :renderText="showHTML"
+      @html="(newHtml) => (html = newHtml)"
+      @name="(newName) => (name = newName)"
+      @text="(newText) => (text = newText)"
+    ></EditableDocument>
 
-    <div class="buttons">
-      <span class="p-buttonset" v-if="showEditableDocument">
+    <span class="p-buttonset" v-if="showEditableDocument">
+      <Button
+        v-tooltip.bottom="{
+          value: `Preview`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-eye"
+        @click="showHTML = !showHTML"
+      ></Button>
+      <Button
+        v-tooltip.bottom="{
+          value: `Save as New`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-save"
+        @click="addToDatabase"
+      ></Button>
+      <Button
+        :disabled="!currDocRef"
+        v-tooltip.bottom="{
+          value: `Save`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-cloud-upload"
+        @click="updateInDatabase"
+      ></Button>
+      <Button
+        :disabled="!currDocRef"
+        v-tooltip.bottom="{
+          value: `Delete`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-trash"
+        @click="
+          showDeleteDialog = !showDeleteDialog;
+          deleteConfirmed = false;
+        "
+      ></Button>
+      <Button
+        v-tooltip.bottom="{
+          value: `Share`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        :disabled="!currDocRef"
+        icon="pi pi-link"
+        @click="
+          showShareDialog = !showShareDialog;
+          copyConfirmed = false;
+        "
+      ></Button>
+      <SplitButton
+        v-tooltip.bottom="{
+          value: `Download`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-download"
+        @click="initiateDownload"
+        :model="downloadItems"
+      ></SplitButton>
+    </span>
+
+    <Dialog position="center" v-model:visible="showDeleteDialog">
+      <template #header>
+        <h3 v-if="deleteConfirmed">
+          Document Permanently Deleted. Click to Close
+        </h3>
+        <h3 v-else>Are you sure?</h3>
+      </template>
+      <p v-if="!deleteConfirmed">
+        This action will permanently delete the document.
+      </p>
+      <template #footer>
         <Button
-          v-tooltip.bottom="{
-            value: `Preview`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-eye"
-          @click="showHTML = !showHTML"
+          v-if="!deleteConfirmed"
+          label="No"
+          icon="pi pi-times"
+          @click="showDeleteDialog = !showDeleteDialog"
         ></Button>
         <Button
-          v-tooltip.bottom="{
-            value: `Save as New`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-save"
-          @click="addToDatabase"
-        ></Button>
-        <Button
-          :disabled="!currDocRef"
-          v-tooltip.bottom="{
-            value: `Save`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-cloud-upload"
-          @click="updateInDatabase"
-        ></Button>
-        <Button
-          :disabled="!currDocRef"
-          v-tooltip.bottom="{
-            value: `Delete`,
-            escape: true,
-            class: 'custom-message',
-          }"
+          v-if="!deleteConfirmed"
+          label="Delete"
           icon="pi pi-trash"
-          @click="
-            showConfirmDialog = !showConfirmDialog;
-            deleteConfirmed = false;
-          "
+          @click="deleteInDatabase"
         ></Button>
         <Button
-          v-tooltip.bottom="{
-            value: `Share`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          :disabled="!currDocRef"
-          icon="pi pi-link"
+          v-else
+          label="Close"
+          icon="pi pi-times"
+          @click="showDeleteDialog = !showDeleteDialog"
+        ></Button>
+      </template>
+    </Dialog>
+
+    <Dialog position="center" v-model:visible="showShareDialog">
+      <template #header>
+        <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
+        <h3 v-else>Invite Others to View Your NoteDown</h3>
+      </template>
+      <LinkGenerator
+        @shareableLink="(newLink) => (link = newLink)"
+        :docId="currDocRef"
+      ></LinkGenerator>
+      <textarea
+        v-if="!copyConfirmed"
+        class="displayLinkArea"
+        v-on:focus="$event.target.select()"
+        ref="clone"
+        readonly
+        :value="link"
+      ></textarea>
+      <template #footer>
+        <Button
+          v-if="copyConfirmed"
           @click="
             showShareDialog = !showShareDialog;
             copyConfirmed = false;
           "
+          label="Close"
+          icon="pi pi-times"
         ></Button>
-        <SplitButton
-          v-tooltip.bottom="{
-            value: `Download`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-download"
-          @click="initiateDownload"
-          :model="downloadItems"
-        ></SplitButton>
-      </span>
-    </div>
-
-    <div class="dialogs">
-      <Dialog position="center" v-model:visible="showConfirmDialog">
-        <template #header>
-          <h3 v-if="deleteConfirmed">
-            Document Permanently Deleted. Click to Close
-          </h3>
-          <h3 v-else>Are you sure?</h3>
-        </template>
-        <p v-if="!deleteConfirmed">
-          This action will permanently delete the document.
-        </p>
-        <template #footer>
-          <Button
-            v-if="!deleteConfirmed"
-            label="No"
-            icon="pi pi-times"
-            @click="showConfirmDialog = !showConfirmDialog"
-          ></Button>
-          <Button
-            v-if="!deleteConfirmed"
-            label="Delete"
-            icon="pi pi-trash"
-            @click="deleteInDatabase"
-          ></Button>
-          <Button
-            v-else
-            label="Close"
-            icon="pi pi-times"
-            @click="showConfirmDialog = !showConfirmDialog"
-          ></Button>
-        </template>
-      </Dialog>
-
-      <Dialog position="center" v-model:visible="showShareDialog">
-        <template #header>
-          <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
-          <h3 v-else>Invite Others to View Your NoteDown</h3>
-        </template>
-        <LinkGenerator
-          @shareableLink="(newLink) => (link = newLink)"
-          :docId="currDocRef"
-        ></LinkGenerator>
-        <textarea
-          v-if="!copyConfirmed"
-          class="displayLinkArea"
-          v-on:focus="$event.target.select()"
-          ref="clone"
-          readonly
-          :value="link"
-        ></textarea>
-        <template #footer>
-          <Button
-            v-if="copyConfirmed"
-            @click="
-              showShareDialog = !showShareDialog;
-              copyConfirmed = false;
-            "
-            label="Close"
-            icon="pi pi-times"
-          ></Button>
-          <Button
-            v-else
-            @click="copyToClipboard"
-            label="Copy"
-            icon="pi pi-link"
-          ></Button>
-        </template>
-      </Dialog>
-    </div>
+        <Button
+          v-else
+          @click="copyToClipboard"
+          label="Copy"
+          icon="pi pi-link"
+        ></Button>
+      </template>
+    </Dialog>
   </div>
 </template>
 
