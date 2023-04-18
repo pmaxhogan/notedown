@@ -2,7 +2,7 @@
 import { computed } from "vue";
 
 export default {
-  
+  name: 'Footer',
   setup() {
     const year = computed(() => new Date().getFullYear());
     return { year };
@@ -17,7 +17,14 @@ export default {
 </template>
 
 <style>
-p {
-  text-align: center;
+footer{
+  height: 45px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+footer p {
+  color: white;
+
 }
 </style>

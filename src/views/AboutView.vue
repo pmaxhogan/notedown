@@ -79,7 +79,10 @@ h3{
   margin-bottom: 0.5rem;
 }
 .about{
-  padding: 40px;
+  padding: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+  height: 120vh;
 }
 .subsection {
   margin-bottom: 2rem;

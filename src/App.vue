@@ -5,6 +5,7 @@ import { RouterView, useRoute, useRouter } from "vue-router";
 import AppHeader from "@/components/AppHeader.vue";
 import { useCurrentUser } from "vuefire";
 import { onMounted, watch } from "vue";
+import Footer from "@/components/AppFooter.vue";
 
 const router = useRouter();
 const route = useRoute();
@@ -26,7 +27,7 @@ onMounted(() => {
   <main>
     <RouterView />
   </main>
-  <!-- <AppFooter /> -->
+  <Footer></Footer>
 </template>
 
 <style>
@@ -36,13 +37,10 @@ html {
   background: #322467;
 }
 
-main {
-  width: min(80%, 100vw);
+main{
+
   background: rgb(254, 252, 255);
   margin: 0 auto;
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 2rem;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   border-radius: 0px 0px 5px 5px;
 }
