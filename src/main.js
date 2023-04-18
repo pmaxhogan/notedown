@@ -4,6 +4,7 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
+import Tooltip from "primevue/tooltip";
 
 import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
@@ -18,7 +19,11 @@ import {
   FontAwesomeLayersText,
 } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPenToSquare, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import {
+  faPenToSquare,
+  faRightFromBracket,
+  faUser,
+} from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import initFirebase from "@/lib/initFirebase";
 
@@ -36,6 +41,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(PrimeVue);
+app.directive("tooltip", Tooltip);
 
 app.use(router);
 
@@ -56,6 +62,6 @@ library.add(faPenToSquare);
 library.add(faUser);
 library.add(faGithub);
 library.add(faGoogle);
-library.add(faRightFromBracket)
+library.add(faRightFromBracket);
 
 app.mount("#app");
