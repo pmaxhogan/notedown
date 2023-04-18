@@ -135,9 +135,7 @@ export default {
       showShareDialog: false,
       copyConfirmed: false,
       showEditableDocument: false,
-      saveStatus: false,
       showHTML: false,
-      download: false,
     };
   },
   components: {
@@ -149,16 +147,6 @@ export default {
       this.$refs.clone.focus();
       document.execCommand("copy");
       this.copyConfirmed = true;
-    },
-    toggleDialog() {
-      this.showShareDialog = !this.showShareDialog;
-      this.copyConfirmed = false;
-    },
-    toggleEditableDocument() {
-      this.showEditableDocument = !this.showEditableDocument;
-    },
-    toggleHTMLView() {
-      this.showHTML = !this.showHTML;
     },
   },
 };
@@ -177,13 +165,16 @@ export default {
       <Button
         label="Create"
         icon="pi pi-file"
-        @click="toggleEditableDocument"
+        @click="
+          this.showEditableDocument = !this.showEditableDocument;
+          currDocRef = '';
+        "
       ></Button>
     </span>
 
     <div>
       <EditableDocument
-        v-if="showEditableDocument"
+        v-if="this.showEditableDocument"
         :renderText="showHTML"
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
@@ -191,7 +182,7 @@ export default {
       ></EditableDocument>
     </div>
 
-    <span class="p-buttonset" v-if="showEditableDocument">
+    <span class="p-buttonset" v-if="this.showEditableDocument">
       <Button
         label="Save as New"
         icon="pi pi-file"
@@ -204,6 +195,7 @@ export default {
         @click="updateInDatabase"
       ></Button>
       <Button
+        :disabled="!currDocRef"
         label="Delete"
         icon="pi pi-trash"
         @click="deleteInDatabase"
@@ -214,11 +206,19 @@ export default {
         @click="initiateDownload"
         :model="downloadItems"
       ></SplitButton>
-      <Button @click="toggleHTMLView" label="Preview" icon="pi pi-eye"></Button>
       <Button
-        @click="toggleDialog"
+        label="Preview"
+        icon="pi pi-eye"
+        @click="this.showHTML = !this.showHTML"
+      ></Button>
+      <Button
+        :disabled="!currDocRef"
         label="Share"
         icon="pi pi-external-link"
+        @click="
+          this.showShareDialog = !this.showShareDialog;
+          this.copyConfirmed = false;
+        "
       ></Button>
     </span>
 
@@ -242,7 +242,10 @@ export default {
       <template #footer>
         <Button
           v-if="copyConfirmed"
-          @click="toggleDialog"
+          @click="
+            this.showShareDialog = !this.showShareDialog;
+            this.copyConfirmed = false;
+          "
           label="Close"
           icon="pi pi-times"
         ></Button>
