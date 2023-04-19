@@ -23,7 +23,8 @@ import Tree from "primevue/tree";
 //firestore imports
 import { useCurrentUser } from "vuefire";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { db } from "@/main"; //firestore instance
+import { db } from "@/main";
+import router from "@/router"; //firestore instance
 
 //Reactive array to hold folder tree nodes
 const nodes = ref([
@@ -192,10 +193,26 @@ function copyToClipboard() {
         :loading="loading"
       >
         <template #default="slotProps">
-          <b>{{ slotProps.node.label }}</b>
-        </template>
-        <template #url="slotProps">
-          <a :href="slotProps.node.data">{{ slotProps.node.label }}</a>
+          <span>{{ slotProps.node.label }}</span>
+          <Button
+            v-if="slotProps.node.data"
+            v-tooltip.bottom="{
+              value: `Preview`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            class="p-button-rounded p-button-text p-button-plain"
+            icon="pi pi-eye"
+            @click="
+              () =>
+                router.push(
+                  '/viewdoc/' +
+                    useCurrentUser()?.value?.uid +
+                    '/' +
+                    slotProps.node.key
+                )
+            "
+          />
         </template>
       </Tree>
     </div>
