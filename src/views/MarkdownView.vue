@@ -199,93 +199,94 @@ function copyToClipboard() {
         </template>
       </Tree>
     </div>
-
-    <SplitButton
-      v-tooltip.bottom="{
-        value: `Select from Dropdown`,
-        escape: true,
-        class: 'custom-message',
-      }"
-      label="New"
-      icon="pi pi-plus"
-      @click="newButtonItems[0].command"
-      :model="newButtonItems"
-    ></SplitButton>
-
-    <EditableDocument
-      v-if="showEditableDocument"
-      :renderText="showHTML"
-      @html="(newHtml) => (html = newHtml)"
-      @name="(newName) => (name = newName)"
-      @text="(newText) => (text = newText)"
-    ></EditableDocument>
-
-    <span class="p-buttonset" v-if="showEditableDocument">
-      <Button
-        v-tooltip.bottom="{
-          value: `Preview`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-eye"
-        @click="showHTML = !showHTML"
-      ></Button>
-      <Button
-        v-tooltip.bottom="{
-          value: `Save as New`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-save"
-        @click="addToDatabase"
-      ></Button>
-      <Button
-        :disabled="!currDocRef"
-        v-tooltip.bottom="{
-          value: `Save`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-cloud-upload"
-        @click="updateInDatabase"
-      ></Button>
-      <Button
-        :disabled="!currDocRef"
-        v-tooltip.bottom="{
-          value: `Delete`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-trash"
-        @click="
-          showDeleteDialog = !showDeleteDialog;
-          deleteConfirmed = false;
-        "
-      ></Button>
-      <Button
-        v-tooltip.bottom="{
-          value: `Share`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        :disabled="!currDocRef"
-        icon="pi pi-link"
-        @click="
-          showShareDialog = !showShareDialog;
-          copyConfirmed = false;
-        "
-      ></Button>
+    <div class="main-window">
       <SplitButton
         v-tooltip.bottom="{
-          value: `Download`,
+          value: `Select from Dropdown`,
           escape: true,
           class: 'custom-message',
         }"
-        icon="pi pi-download"
-        @click="initiateDownload"
-        :model="downloadItems"
+        :model="newButtonItems"
+        icon="pi pi-plus"
+        label="New"
+        @click="newButtonItems[0].command"
       ></SplitButton>
-    </span>
+
+      <EditableDocument
+        v-if="showEditableDocument"
+        :renderText="showHTML"
+        @html="(newHtml) => (html = newHtml)"
+        @name="(newName) => (name = newName)"
+        @text="(newText) => (text = newText)"
+      ></EditableDocument>
+
+      <span v-if="showEditableDocument" class="p-buttonset">
+        <Button
+          v-tooltip.bottom="{
+            value: `Preview`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          icon="pi pi-eye"
+          @click="showHTML = !showHTML"
+        ></Button>
+        <Button
+          v-tooltip.bottom="{
+            value: `Save as New`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          icon="pi pi-save"
+          @click="addToDatabase"
+        ></Button>
+        <Button
+          v-tooltip.bottom="{
+            value: `Save`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          :disabled="!currDocRef"
+          icon="pi pi-cloud-upload"
+          @click="updateInDatabase"
+        ></Button>
+        <Button
+          v-tooltip.bottom="{
+            value: `Delete`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          :disabled="!currDocRef"
+          icon="pi pi-trash"
+          @click="
+            showDeleteDialog = !showDeleteDialog;
+            deleteConfirmed = false;
+          "
+        ></Button>
+        <Button
+          v-tooltip.bottom="{
+            value: `Share`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          :disabled="!currDocRef"
+          icon="pi pi-link"
+          @click="
+            showShareDialog = !showShareDialog;
+            copyConfirmed = false;
+          "
+        ></Button>
+        <SplitButton
+          v-tooltip.bottom="{
+            value: `Download`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          :model="downloadItems"
+          icon="pi pi-download"
+          @click="initiateDownload"
+        ></SplitButton>
+      </span>
+    </div>
 
     <Dialog position="center" v-model:visible="showDeleteDialog">
       <template #header>
@@ -380,5 +381,11 @@ textarea {
   color: #000000;
   font-size: 11px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+.markdown {
+  display: flex;
+}
+.file-tree {
+  flex-basis: 20%;
 }
 </style>
