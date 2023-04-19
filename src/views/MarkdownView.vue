@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
@@ -21,8 +21,8 @@ import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
 
 //firestore imports
-import { useCurrentUser } from "vuefire";
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
+import { useCurrentUser, useCollection } from "vuefire";
+import { collection } from "firebase/firestore";
 import { db } from "@/main";
 import router from "@/router";
 import Toast from "primevue/toast";
@@ -30,16 +30,6 @@ import { useToast } from "primevue/usetoast";
 
 const toast = useToast();
 //firestore instance
-
-//Reactive array to hold folder tree nodes
-const nodes = ref([
-  {
-    key: "0",
-    label: "Default",
-    icon: "pi pi-folder",
-    children: [],
-  },
-]);
 
 //toggle displays
 const showShareDialog = ref(false);
@@ -65,11 +55,38 @@ const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref("Untitled Document"); //document name
 
-//listens to changes in firebase collections
-
 //reference to the subcollection
-const cRef = collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs");
+const cRef = useCollection(
+  collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")
+);
 
+const nodes = computed(() => {
+  const temp = {
+    key: "0",
+    label: "Default",
+    icon: "pi pi-folder",
+    children: cRef.value.map((cref) => ({
+      key: cref.id,
+      icon: "pi pi-file",
+      label: cref.docName,
+      data: cref.docURL,
+      currText: cref.textString,
+      type: "url",
+    })),
+  };
+  return temp;
+});
+
+/*
+//Reactive array to hold folder tree nodes
+const nodes = ref([
+  {
+    key: "0",
+    label: "Default",
+    icon: "pi pi-folder",
+    children: [],
+  },
+]);
 //sorts the documents in subcollection in order of creation/update
 //checks for changes to documents in a collection
 onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
@@ -82,6 +99,7 @@ onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
         icon: "pi pi-file",
         label: change.doc.data().docName,
         data: change.doc.data().docURL,
+        currText: change.doc.data().textString,
         type: "url",
       });
     }
@@ -89,9 +107,15 @@ onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
     if (change.type === "removed") {
       nodes.value[0].children.pop();
     }
-    console.log(nodes.value[0].children);
+    //console.log(nodes.value[0].children);
   });
 });
+*/
+//opens selected document in EditableDocument
+const onNodeSelect = (node) => {
+  console.log(node.data);
+};
+
 //actions for document download
 const downloadItems = [
   {
@@ -205,6 +229,7 @@ const showError = () => {
         class="w-full md:w-30rem"
         selectionMode="single"
         :loading="loading"
+        @nodeSelect="onNodeSelect"
       >
         <template #default="slotProps">
           <span>{{ slotProps.node.label }}</span>
@@ -226,7 +251,18 @@ const showError = () => {
                     slotProps.node.key
                 )
             "
-          />
+          ></Button>
+          <Button
+            v-if="slotProps.node.data"
+            v-tooltip.bottom="{
+              value: `Edit`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            class="p-button-rounded p-button-text p-button-plain"
+            icon="pi pi-pencil"
+            @click="onNodeSelect"
+          ></Button>
         </template>
       </Tree>
     </div>
