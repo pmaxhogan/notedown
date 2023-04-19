@@ -24,7 +24,12 @@ import Tree from "primevue/tree";
 import { useCurrentUser } from "vuefire";
 import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
 import { db } from "@/main";
-import router from "@/router"; //firestore instance
+import router from "@/router";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+//firestore instance
 
 //Reactive array to hold folder tree nodes
 const nodes = ref([
@@ -181,6 +186,15 @@ function copyToClipboard() {
   document.execCommand("copy");
   copyConfirmed.value = true;
 }
+
+const showError = () => {
+  toast.add({
+    severity: "error",
+    summary: "Error",
+    detail: "Content too long",
+    life: 3000,
+  });
+};
 </script>
 
 <template>
@@ -235,6 +249,7 @@ function copyToClipboard() {
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
+        @error="showError"
       ></EditableDocument>
 
       <span v-if="showEditableDocument" class="p-buttonset">
@@ -375,6 +390,7 @@ function copyToClipboard() {
         ></Button>
       </template>
     </Dialog>
+    <Toast ref="toast" />
   </div>
 </template>
 

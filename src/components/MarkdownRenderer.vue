@@ -3,7 +3,7 @@ import * as DOMPurify from "dompurify";
 import { parse } from "marked";
 import { ref, watch } from "vue";
 
-const emit = defineEmits(["html"]);
+const emit = defineEmits(["html", "error"]);
 
 const sanitize = DOMPurify.default.sanitize;
 
@@ -18,13 +18,11 @@ const MAX_CONTENT_LENGTH = 1000;
 watch(
   () => props.content,
   () => {
-    if (props.content.length > MAX_CONTENT_LENGTH) {
-      throw new Error("Content too long");
-    }
+    emit("error", "Content too long");
   }
 );
 if (props.content.length > MAX_CONTENT_LENGTH) {
-  throw new Error("Content too long");
+  emit("error", "Content too long");
 }
 
 const output = ref("");

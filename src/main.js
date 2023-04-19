@@ -10,6 +10,8 @@ import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
 
+import ToastService from "primevue/toastservice";
+
 import "./assets/main.css";
 import { VueFire, VueFireAuth } from "vuefire";
 import { getFirestore } from "firebase/firestore";
@@ -44,6 +46,7 @@ app.use(PrimeVue);
 app.directive("tooltip", Tooltip);
 
 app.use(router);
+app.use(ToastService);
 
 app.use(VueFire, {
   // imported above but could also just be created here
