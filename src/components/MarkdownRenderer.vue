@@ -14,7 +14,15 @@ const props = defineProps({
   },
 });
 
-const MAX_CONTENT_LENGTH = 10 * 1000 * 1000;
+const MAX_CONTENT_LENGTH = 1000;
+watch(
+  () => props.content,
+  () => {
+    if (props.content.length > MAX_CONTENT_LENGTH) {
+      throw new Error("Content too long");
+    }
+  }
+);
 if (props.content.length > MAX_CONTENT_LENGTH) {
   throw new Error("Content too long");
 }
