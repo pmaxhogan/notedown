@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { computed, ref } from "vue";
 
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
@@ -21,7 +21,7 @@ import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
 
 //firestore imports
-import { useCurrentUser, useCollection } from "vuefire";
+import { useCollection, useCurrentUser } from "vuefire";
 import { collection } from "firebase/firestore";
 import { db } from "@/main";
 import router from "@/router";
@@ -74,7 +74,7 @@ const nodes = computed(() => {
       type: "url",
     })),
   };
-  return temp;
+  return [temp];
 });
 
 /*
@@ -219,6 +219,8 @@ const showError = () => {
     life: 3000,
   });
 };
+
+const loading = ref(false);
 </script>
 
 <template>
