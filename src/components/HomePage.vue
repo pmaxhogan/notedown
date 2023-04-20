@@ -1,23 +1,23 @@
-<script>
-  export default{
-    name: 'HomePage'
-  }
-  
+<script setup>
+
+
 </script>
 <template>
   <div class="HomeContainer">
     <div class="NotesTab">
       <div class="title">
         <h4>Notes</h4>
-        <button><font-awesome-icon icon="fa-solid fa-pen-to-square"  class="icon"/> </button>
+        <button class="newNote" @click="newNote()"><font-awesome-icon icon="fa-solid fa-pen-to-square"  class="icon"/></button>
       </div>
-      <div class="Notes">
+      <div class="Notes" id="Notes">
+        <div class="Notes1">
         <p class="NoteTitle">
           Class Notes Apr 17
         </p>
         <p class="NoteDescr">
           Lorem ipsum dolor sit amet sed od...
         </p>
+      </div>
       </div>
   </div>
   <div class="MarkdownSection">
@@ -75,8 +75,10 @@
   cursor: pointer;
   font-size: 18px;
 }
-
 .NotesTab .Notes{
+  width: 100%;
+}
+.NotesTab .Notes1{
   text-align: left;
   padding: 22px;
   background-color: #e5d0f5;

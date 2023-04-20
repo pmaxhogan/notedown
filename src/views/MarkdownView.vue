@@ -31,6 +31,17 @@ const nodes = ref([
   },
 ]);
 
+function btnclicked(){
+  const element = document.getElementById("editDoc");
+  const element2 = document.getElementById("createbtn");
+  if (element.style.display === "none" && element2.style.display === "block") {
+    element.style.display = "block";
+    element2.style.display = "none";
+  } else {
+    element.style.display = "none";
+    element2.style.display = "block";
+  }
+}
 onMounted(() => {
   //reference to the subcollection
   const cRef = collection(
@@ -153,60 +164,63 @@ export default {
 </script>
 <template>
   <div class="markdown">
-    <div>
-      <Tree :value="nodes" class="w-full md:w-30rem">
+    <div class="tree">
+      <Tree :value="nodes" id="tree" class="w-full md:w-30rem">
         <template #default="slotProps">
           <b>{{ slotProps.node.label }}</b>
         </template>
       </Tree>
     </div>
-
-    <span class="p-buttonset">
-      <Button
+    <div class="create">
+    <span class="p-buttonset" id="createbtn">
+      <button @click="btnclicked()
+        ">
+        <font-awesome-icon class="icon" icon="fa-solid fa-plus" />
+      </button>
+      <p>Create New</p>
+      <!-- <Button
         label="Create"
         icon="pi pi-file"
         @click="
           this.showEditableDocument = !this.showEditableDocument;
           currDocRef = '';
         "
-      ></Button>
+      ></Button> -->
     </span>
-
-    <div>
+    <div id="editDoc" class="editDoc">
       <EditableDocument
-        v-if="this.showEditableDocument"
+      
         :renderText="showHTML"
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
       ></EditableDocument>
-    </div>
 
-    <span class="p-buttonset" v-if="this.showEditableDocument">
-      <Button
+    <span class="p-buttonsetDoc">
+      <Button class="save"
         label="Save as New"
         icon="pi pi-file"
         @click="addToDatabase"
       ></Button>
-      <Button
+      <Button class="save"
         :disabled="!currDocRef"
         icon="pi pi-file"
         label="Save"
         @click="updateInDatabase"
       ></Button>
-      <Button
+      <Button class="save"
         :disabled="!currDocRef"
         label="Delete"
         icon="pi pi-trash"
         @click="deleteInDatabase"
       ></Button>
-      <SplitButton
+      <SplitButton class="save"
         label="Download"
         icon="pi pi-download"
         @click="initiateDownload"
         :model="downloadItems"
       ></SplitButton>
-      <Button
+      <Button class="save"
         label="Preview"
         icon="pi pi-eye"
         @click="this.showHTML = !this.showHTML"
@@ -253,6 +267,8 @@ export default {
       </template>
     </Dialog>
   </div>
+</div>
+</div>
 </template>
 
 <style lang="scss">
@@ -262,6 +278,9 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
+.editDoc{
+  display: none;
+}
 .displayLinkArea {
   width: 100%;
   height: 25px;
@@ -270,4 +289,49 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
+.markdown{
+  display: flex;
+  height: 95vh;
+  width: 100%;
+}
+#tree{
+  width: 19vw;
+  height: 100%;
+}
+.create{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create .p-buttonset{
+  text-align: center;
+}
+.create .p-buttonset button{
+  height: 50px;
+  width: 50px;
+  border: none;
+  background-color: rgb(254, 252, 255);
+}
+.p-buttonset .icon{
+  font-size: 40px;
+  color: gray;
+}
+.p-buttonset p{
+  font-size: 20px;
+  color: gray;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 400;
+}
+
+.p-buttonsetDoc{
+  display: flex;
+  justify-content: center;
+}
+.save{
+  margin-right: 17px;
+}
+
+
 </style>
