@@ -4,18 +4,21 @@ import { computed, ref, watchEffect } from "vue";
 
 const emit = defineEmits(["html", "text", "name", "error"]);
 
-const contentToRender = ref(
-  String.raw`
-# Markdown Test!
-\\(\text{M}\alpha\text{thjax Test}\\)
-`.trim()
-);
+const contentToRender = ref(props.content);
+
 const documentName = ref("Untitled Document");
 
 const props = defineProps({
   renderText: {
     type: Boolean,
     required: true,
+  },
+  content: {
+    type: String,
+    default: String.raw`
+# Markdown Test!
+\\(\text{M}\alpha\text{thjax Test}\\)
+`.trim(),
   },
 });
 

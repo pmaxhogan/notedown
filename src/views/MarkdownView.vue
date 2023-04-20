@@ -113,7 +113,8 @@ onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
 */
 //opens selected document in EditableDocument
 const onNodeSelect = (node) => {
-  console.log(node.data);
+  showEditableDocument.value = true;
+  text.value = node.currText;
 };
 
 //actions for document download
@@ -284,6 +285,7 @@ const loading = ref(false);
       <EditableDocument
         v-if="showEditableDocument"
         :renderText="showHTML"
+        :content="text"
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
