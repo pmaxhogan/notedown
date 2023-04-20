@@ -329,7 +329,7 @@ const showError = () => {
           @click="initiateDownload"
         ></SplitButton>
       </span>
-    </div>
+    
     <Dialog position="center" v-model:visible="showDeleteDialog">
       <template #header>
         <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
@@ -399,6 +399,7 @@ const showError = () => {
     </Dialog>
     <Toast ref="toast" />
   </div>
+</div>
 </template>
 <style lang="scss">
 textarea {
@@ -423,8 +424,20 @@ textarea {
 }
 .markdown {
   display: flex;
+  height: 95vh;
+  width: 100%;
 }
 .file-tree {
+  width: 19vw;
+  height: 100%;
   flex-basis: 27%;
+  border-right: solid 1.5px rgb(232, 232, 232);
+}
+.main-window{
+  width: 100%;
+}
+.p-buttonset{
+  display: flex;
+  justify-content: center;
 }
 </style>

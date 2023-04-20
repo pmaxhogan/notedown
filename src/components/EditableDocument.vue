@@ -40,7 +40,8 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div>
+  <div class="container">
+    <div>
     <textarea
       class="edit-filename"
       :class="{ 'invalid-name': invalidDocumentName }"
@@ -67,27 +68,43 @@ watchEffect(() => {
       @error="emit('error', $event)"
     ></MarkdownRenderer>
   </div>
+</div>
 </template>
 <style scoped>
+.container{
+  width: 100%;
+  height: 75vh;
+  display: flex; 
+  justify-content: center;
+  margin-bottom: 25px;
+}
 .edit-filename {
-  max-height: 25px;
+  text-justify: center;
+  max-height: 32px;
+  width: 120vh;
   padding: 0.1rem;
   padding-left: 1rem;
-  resize: none;
+  display: flex;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-top: 6px;
 }
 .editable-area {
   min-height: 200px;
+  min-height: 470px;
+  width: 120vh;
   resize: vertical;
   padding: 1rem;
 }
 .edit-filename,
 .editable-area {
+  border: 0.8px solid ;
   border-radius: 4px;
-  border-color: #e2d5ec;
+  border-color: #dac7e8;
   overflow: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
-  background-color: #fff9fe;
+  background-color: #fff9ff;
   color: #000000;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
