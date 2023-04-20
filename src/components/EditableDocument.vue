@@ -1,24 +1,31 @@
 <script setup>
 import MarkdownRenderer from "../components/MarkdownRenderer.vue";
-import { ref, watchEffect } from "vue";
-import { computed } from "vue";
+import { computed, ref, watchEffect } from "vue";
 
-const emit = defineEmits(["html", "text", "name"]); 
+const emit = defineEmits(["html", "text", "name", "error"]);
 
-const contentToRender = ref(
-  String.raw`
-# Markdown Test!
-\\(\text{M}\alpha\text{thjax Test}\\)
-`.trim()
-);
-const documentName = ref("Untitled Document");
 
 const props = defineProps({
   renderText: {
     type: Boolean,
     required: true,
   },
+  fileContent: {
+    type: String,
+    default: String.raw`
+# Markdown Test!
+\\(\text{M}\alpha\text{thjax Test}\\)
+`.trim(),
+  },
+  fileName: {
+    type: String,
+    default: "Untitled Document",
+  },
 });
+
+const contentToRender = ref(props.fileContent);
+
+const documentName = ref(props.fileName);
 
 const invalidDocumentName = computed(() => {
   const specialCharRegex = /^[!@#$%^&*(),.?":{}|<>]/;
@@ -59,9 +66,10 @@ watchEffect(() => {
     ></textarea>
 
     <MarkdownRenderer
-      v-show="props.renderText"
+      v-show="props?.renderText"
       :content="contentToRender"
       @html="emit('html', $event)"
+      @error="emit('error', $event)"
     ></MarkdownRenderer>
   </div>
 </div>

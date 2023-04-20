@@ -4,10 +4,13 @@ import { createPinia } from "pinia";
 import App from "./App.vue";
 import router from "./router";
 import PrimeVue from "primevue/config";
+import Tooltip from "primevue/tooltip";
 
 import "primevue/resources/themes/soho-light/theme.css";
 import "primevue/resources/primevue.min.css";
 import "primeicons/primeicons.css";
+
+import ToastService from "primevue/toastservice";
 
 import "./assets/main.css";
 import { VueFire, VueFireAuth } from "vuefire";
@@ -18,7 +21,7 @@ import {
   FontAwesomeLayersText,
 } from "@fortawesome/vue-fontawesome";
 import { library } from "@fortawesome/fontawesome-svg-core";
-import { faPenToSquare, faPlus, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faPenToSquare, faRightFromBracket, faUser } from "@fortawesome/free-solid-svg-icons";
 import { faGithub, faGoogle } from "@fortawesome/free-brands-svg-icons";
 import initFirebase from "@/lib/initFirebase";
 
@@ -36,8 +39,10 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(PrimeVue);
+app.directive("tooltip", Tooltip);
 
 app.use(router);
+app.use(ToastService);
 
 app.use(VueFire, {
   // imported above but could also just be created here
@@ -56,7 +61,6 @@ library.add(faPenToSquare);
 library.add(faUser);
 library.add(faGithub);
 library.add(faGoogle);
-library.add(faRightFromBracket);
-library.add(faPlus);
+library.add(faRightFromBracket)
 
 app.mount("#app");

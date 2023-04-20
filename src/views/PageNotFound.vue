@@ -2,13 +2,18 @@
 
 <template>
   <h1>404 Page</h1>
-  <h2>Invalid Link or Document no longer exists</h2>
+  <p>
+    Hello! Looks like you're trying to access a document that wasn't saved,
+    deleted, or doesn't exist. We recommend you check the link and try again.
+  </p>
 </template>
 
 <style scoped>
 h1,
-h2 {
-  color: #ffc107;
+p {
+  color: #ff7707;
+  position: sticky;
+  align-items: center;
 }
 @media (min-width: 1024px) {
   .about {

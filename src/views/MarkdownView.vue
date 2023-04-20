@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
@@ -10,6 +10,10 @@ import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
 import deleteDocument from "@/lib/deleteDocument.js";
 
+//Vue components
+import EditableDocument from "@/components/EditableDocument.vue";
+import LinkGenerator from "@/components/LinkGenerator.vue";
+
 //PrimeVue Components
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
@@ -17,10 +21,44 @@ import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
 
 //firestore imports
-import { useCurrentUser } from "vuefire";
-// eslint-disable-next-line prettier/prettier
-import { collection, onSnapshot, orderBy, query } from "firebase/firestore";
-import { db } from "@/main"; //firestore instance
+import { useCollection, useCurrentUser } from "vuefire";
+import { collection } from "firebase/firestore";
+import { db } from "@/main";
+import router from "@/router";
+import Toast from "primevue/toast";
+import { useToast } from "primevue/usetoast";
+
+const toast = useToast();
+//firestore instance
+
+//toggle displays
+const showShareDialog = ref(false);
+const copyConfirmed = ref(false);
+const showDeleteDialog = ref(false);
+const deleteConfirmed = ref(false);
+const showHTML = ref(false);
+const showEditableArea = ref(false);
+
+//specify download format
+const HTMLonly = ref(false);
+const MDonly = ref(false);
+
+//link share, copy to clipboard
+const clone = ref(null);
+const link = ref("");
+
+//document, folder references
+const currDocRef = ref("");
+
+//user inputs
+const html = ref(""); //HTML rendered string
+const text = ref(""); //plaintext string
+const name = ref(""); //document name
+
+//reference to the subcollection
+const cRef = useCollection(
+  collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")
+);
 
 const nodes = ref([
   {
@@ -31,17 +69,6 @@ const nodes = ref([
   },
 ]);
 
-function btnclicked(){
-  const element = document.getElementById("editDoc");
-  const element2 = document.getElementById("createbtn");
-  if (element.style.display === "none" && element2.style.display === "block") {
-    element.style.display = "block";
-    element2.style.display = "none";
-  } else {
-    element.style.display = "none";
-    element2.style.display = "block";
-  }
-}
 onMounted(() => {
   //reference to the subcollection
   const cRef = collection(
@@ -72,35 +99,63 @@ onMounted(() => {
   });
 });
 
-const currDocRef = ref("");
+//opens selected document in EditableDocument
+const editDocument = (node) => {
+  if (node.key != "Default") {
+    showEditableArea.value = true;
 
-const html = ref("");
-const text = ref("");
-const name = ref("Untitled Document");
+    //update file text, file name, and document ID
+    text.value = node.currText;
+    name.value = node.label;
+    currDocRef.value = node.key;
+  }
+};
 
-let HTMLonly = false;
-let MDonly = false;
+//actions for document download
 const downloadItems = [
   {
     label: ".HTML Only",
     icon: "pi pi-download",
     command: () => {
-      HTMLonly = true;
+      HTMLonly.value = true;
       initiateDownload();
-      HTMLonly = false;
+      HTMLonly.value = false;
     },
   },
   {
     label: ".MD Only",
     icon: "pi pi-download",
     command: () => {
-      MDonly = true;
+      MDonly.value = true;
       initiateDownload();
-      MDonly = false;
+      MDonly.value = false;
     },
   },
 ];
 
+//actions for create new...
+const newButtonItems = [
+  {
+    label: "New Document",
+    icon: "pi pi-file",
+    command: () => {
+      showEditableArea.value = true;
+      currDocRef.value = "";
+    },
+  },
+  {
+    label: "New Folder",
+    icon: "pi pi-folder",
+    //remove this line once folder creation is setup
+    disabled: true,
+    command: () => {
+      createNewCollection();
+      //need to add const variable to hold the new folder name.
+    },
+  },
+];
+
+//downloads document based on format specified
 function initiateDownload() {
   switch (true) {
     case HTMLonly:
@@ -116,6 +171,7 @@ function initiateDownload() {
   }
 }
 
+//save as new document in database
 async function addToDatabase() {
   currDocRef.value = await createNewDocument(
     name.value,
@@ -125,102 +181,142 @@ async function addToDatabase() {
   console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
 
+//save changes to document
 function updateInDatabase() {
-  updateDocument(text.value, html.value, currDocRef.value);
+  updateDocument(name.value, text.value, html.value, currDocRef.value);
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
 
+//permanently delete document
 function deleteInDatabase() {
   deleteDocument(currDocRef.value);
   console.log("Permanently deleted Document ID: ", currDocRef.value);
+  deleteConfirmed.value = true;
 }
-</script>
 
-<script>
-import EditableDocument from "@/components/EditableDocument.vue";
-import LinkGenerator from "@/components/LinkGenerator.vue";
-export default {
-  data() {
-    return {
-      link: "",
-      showShareDialog: false,
-      copyConfirmed: false,
-      showEditableDocument: false,
-      showHTML: false,
-    };
-  },
-  components: {
-    EditableDocument,
-    LinkGenerator,
-  },
-  methods: {
-    copy() {
-      this.$refs.clone.focus();
-      document.execCommand("copy");
-      this.copyConfirmed = true;
-    },
-  },
+//create new folder
+function createNewCollection() {}
+
+//move document into a new folder
+function moveIntoFolder() {
+  //display dialog with folders from a drop down menu
+  //containing list of current folders
+  //have user select a folder from the menu
+  //update nodes???
+}
+
+//copy text to clipboard
+function copyToClipboard() {
+  clone.value.focus();
+  document.execCommand("copy");
+  copyConfirmed.value = true;
+}
+
+const showError = () => {
+  toast.add({
+    severity: "error",
+    summary: "Error",
+    detail: "Content too long",
+    life: 3000,
+  });
 };
 </script>
+
 <template>
   <div class="markdown">
-    <div class="tree">
-      <Tree :value="nodes" id="tree" class="w-full md:w-30rem">
+    <div>
+      <Tree :value="nodes" class="w-full md:w-30rem">
         <template #default="slotProps">
-          <b>{{ slotProps.node.label }}</b>
+          <span
+            v-tooltip.bottom="{
+              value: `Click to Edit Document`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            >{{ slotProps.node.label }}</span
+          >
+          <Button
+            v-if="slotProps.node.data"
+            v-tooltip.bottom="{
+              value: `Preview`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            class="p-button-rounded p-button-text p-button-plain"
+            icon="pi pi-eye"
+            @click="
+              () =>
+                router.push(
+                  '/viewdoc/' +
+                    useCurrentUser()?.value?.uid +
+                    '/' +
+                    slotProps.node.key
+                )
+            "
+          ></Button>
+          <Button
+            v-if="slotProps.node.data"
+            v-tooltip.bottom="{
+              value: `Move to Folder`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            class="p-button-rounded p-button-text p-button-plain"
+            icon="pi pi-folder-open"
+            @click="moveIntoFolder"
+          ></Button>
         </template>
       </Tree>
     </div>
-    <div class="create">
-    <span class="p-buttonset" id="createbtn">
-      <button @click="btnclicked()
-        ">
-        <font-awesome-icon class="icon" icon="fa-solid fa-plus" />
-      </button>
-      <p>Create New</p>
-      <!-- <Button
+
+    <span class="p-buttonset">
+      <Button
         label="Create"
         icon="pi pi-file"
         @click="
           this.showEditableDocument = !this.showEditableDocument;
           currDocRef = '';
         "
-      ></Button> -->
+      ></Button>
     </span>
-    <div id="editDoc" class="editDoc">
+
+    <div>
       <EditableDocument
-      
+        v-if="this.showEditableDocument"
         :renderText="showHTML"
+        :fileContent="text"
+        :fileName="name"
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
+        @error="showError"
       ></EditableDocument>
 
-    <span class="p-buttonsetDoc">
-      <Button class="save"
+    <span class="p-buttonset" v-if="this.showEditableDocument">
+      <Button
         label="Save as New"
         icon="pi pi-file"
         @click="addToDatabase"
       ></Button>
-      <Button class="save"
+      <Button
         :disabled="!currDocRef"
         icon="pi pi-file"
         label="Save"
         @click="updateInDatabase"
       ></Button>
-      <Button class="save"
+      <Button
         :disabled="!currDocRef"
         label="Delete"
         icon="pi pi-trash"
         @click="deleteInDatabase"
       ></Button>
-      <SplitButton class="save"
+      <SplitButton
         label="Download"
         icon="pi pi-download"
         @click="initiateDownload"
         :model="downloadItems"
       ></SplitButton>
-      <Button class="save"
+      <Button
         label="Preview"
         icon="pi pi-eye"
         @click="this.showHTML = !this.showHTML"
@@ -257,15 +353,21 @@ export default {
         <Button
           v-if="copyConfirmed"
           @click="
-            this.showShareDialog = !this.showShareDialog;
-            this.copyConfirmed = false;
+            showShareDialog = false;
+            copyConfirmed = false;
           "
           label="Close"
           icon="pi pi-times"
         ></Button>
-        <Button v-else @click="copy" label="Copy" icon="pi pi-link"></Button>
+        <Button
+          v-else
+          @click="copyToClipboard"
+          label="Copy"
+          icon="pi pi-link"
+        ></Button>
       </template>
     </Dialog>
+    <Toast ref="toast" />
   </div>
 </div>
 </div>
@@ -289,49 +391,4 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
-.markdown{
-  display: flex;
-  height: 95vh;
-  width: 100%;
-}
-#tree{
-  width: 19vw;
-  height: 100%;
-}
-.create{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.create .p-buttonset{
-  text-align: center;
-}
-.create .p-buttonset button{
-  height: 50px;
-  width: 50px;
-  border: none;
-  background-color: rgb(254, 252, 255);
-}
-.p-buttonset .icon{
-  font-size: 40px;
-  color: gray;
-}
-.p-buttonset p{
-  font-size: 20px;
-  color: gray;
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 400;
-}
-
-.p-buttonsetDoc{
-  display: flex;
-  justify-content: center;
-}
-.save{
-  margin-right: 17px;
-}
-
-
 </style>
