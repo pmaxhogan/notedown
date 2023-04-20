@@ -1,10 +1,10 @@
+
+ 
+
 <script setup>
 import MarkdownRenderer from "../components/MarkdownRenderer.vue";
 import { computed, ref, watchEffect } from "vue";
-
 const emit = defineEmits(["html", "text", "name", "error"]);
-
-
 const props = defineProps({
   renderText: {
     type: Boolean,
@@ -22,11 +22,8 @@ const props = defineProps({
     default: "Untitled Document",
   },
 });
-
 const contentToRender = ref(props.fileContent);
-
 const documentName = ref(props.fileName);
-
 const invalidDocumentName = computed(() => {
   const specialCharRegex = /^[!@#$%^&*(),.?":{}|<>]/;
   return (
@@ -34,7 +31,6 @@ const invalidDocumentName = computed(() => {
     specialCharRegex.test(documentName.value)
   );
 });
-
 watchEffect(() => {
   emit("text", contentToRender.value);
   if (!invalidDocumentName.value) {
@@ -44,7 +40,6 @@ watchEffect(() => {
 </script>
 
 <template>
-  <div class="documentCreation">
   <div>
     <textarea
       class="edit-filename"
@@ -72,52 +67,34 @@ watchEffect(() => {
       @error="emit('error', $event)"
     ></MarkdownRenderer>
   </div>
-</div>
 </template>
-
 <style scoped>
-.documentCreation{
-  height: 75vh;
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
-}
 .edit-filename {
-  text-justify: center;
-  max-height: 32px;
-  width: 120vh;
+  max-height: 25px;
   padding: 0.1rem;
   padding-left: 1rem;
   resize: none;
-  display: flex;
-  margin-bottom: 10px;
-  padding-top: 6px;
 }
 .editable-area {
-  min-height: 470px;
-  width: 120vh;
+  min-height: 200px;
   resize: vertical;
   padding: 1rem;
 }
 .edit-filename,
 .editable-area {
-  border: 0.8px solid ;
   border-radius: 4px;
-  border-color: #dac7e8;
+  border-color: #e2d5ec;
   overflow: auto;
   white-space: pre-wrap;
   word-wrap: break-word;
-  background-color: #fff9ff;
+  background-color: #fff9fe;
   color: #000000;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
-
 .invalid-name {
   border-color: #f14668;
 }
-
 .error-message {
   color: #f14668;
   font-size: 0.9rem;
