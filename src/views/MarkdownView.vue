@@ -1,23 +1,26 @@
-
- 
-
 <script setup>
 import { computed, ref } from "vue";
+
 //style imports
 import "@/assets/themes/mytheme/theme.scss";
+
 //Database Helper Functions
 import download from "@/lib/download.js";
 import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
 import deleteDocument from "@/lib/deleteDocument.js";
+
 //Vue components
 import EditableDocument from "@/components/EditableDocument.vue";
 import LinkGenerator from "@/components/LinkGenerator.vue";
+
 //PrimeVue Components
 import Dialog from "primevue/dialog";
 import Button from "primevue/button";
 import SplitButton from "primevue/splitbutton";
 import Tree from "primevue/tree";
+import InputText from "primevue/inputtext";
+
 //firestore imports
 import { useCollection, useCurrentUser } from "vuefire";
 import { collection } from "firebase/firestore";
@@ -25,8 +28,9 @@ import { db } from "@/main";
 import router from "@/router";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
+
 const toast = useToast();
-//firestore instance
+
 //toggle displays
 const showShareDialog = ref(false);
 const copyConfirmed = ref(false);
@@ -34,26 +38,34 @@ const showDeleteDialog = ref(false);
 const deleteConfirmed = ref(false);
 const showHTML = ref(false);
 const showEditableArea = ref(false);
+const showFolderForm = ref(false);
+
 //specify download format
 const HTMLonly = ref(false);
 const MDonly = ref(false);
+
 //link share, copy to clipboard
 const clone = ref(null);
 const link = ref("");
+
 //document, folder references
 const currDocRef = ref("");
-//user inputs
+const folderName = ref("Untitled Folder");
+
+//user inputs into editable area
 const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref(""); //document name
+
 //reference to the subcollection
 const cRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")
 );
+
 const nodes = computed(() => {
   return [
     {
-      key: "Default",
+      key: "0",
       label: "Default",
       icon: "pi pi-folder",
       children: cRef.value.map((cref) => ({
@@ -65,11 +77,18 @@ const nodes = computed(() => {
         type: "url",
       })),
     },
+    {
+      key: "1",
+      label: folderName.value,
+      icon: "pi pi-folder",
+      children: [],
+    },
   ];
 });
+
 //opens selected document in EditableDocument
 const editDocument = (node) => {
-  if (node.key != "Default") {
+  if (node.key.length > 1) {
     showEditableArea.value = true;
     //update file text, file name, and document ID
     text.value = node.currText;
@@ -77,6 +96,7 @@ const editDocument = (node) => {
     currDocRef.value = node.key;
   }
 };
+
 //actions for document download
 const downloadItems = [
   {
@@ -98,6 +118,7 @@ const downloadItems = [
     },
   },
 ];
+
 //actions for create new...
 const newButtonItems = [
   {
@@ -111,14 +132,13 @@ const newButtonItems = [
   {
     label: "New Folder",
     icon: "pi pi-folder",
-    //remove this line once folder creation is setup
-    disabled: true,
     command: () => {
-      createNewCollection();
-      //need to add const variable to hold the new folder name.
+      showFolderForm.value = true;
+      folderName.value = "";
     },
   },
 ];
+
 //downloads document based on format specified
 function initiateDownload() {
   switch (true) {
@@ -134,35 +154,31 @@ function initiateDownload() {
       break;
   }
 }
+
 //save as new document in database
 async function addToDatabase() {
   currDocRef.value = await createNewDocument(
     name.value,
     text.value,
-    html.value
+    html.value,
+    "Default"
   );
   console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
+
 //save changes to document
 function updateInDatabase() {
   updateDocument(name.value, text.value, html.value, currDocRef.value);
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
+
 //permanently delete document
 function deleteInDatabase() {
   deleteDocument(currDocRef.value);
   console.log("Permanently deleted Document ID: ", currDocRef.value);
   deleteConfirmed.value = true;
 }
-//create new folder
-function createNewCollection() {}
-//move document into a new folder
-function moveIntoFolder() {
-  //display dialog with folders from a drop down menu
-  //containing list of current folders
-  //have user select a folder from the menu
-  //update nodes???
-}
+
 //copy text to clipboard
 function copyToClipboard() {
   clone.value.focus();
@@ -215,17 +231,6 @@ const showError = () => {
                 )
             "
           ></Button>
-          <Button
-            v-if="slotProps.node.data"
-            v-tooltip.bottom="{
-              value: `Move to Folder`,
-              escape: true,
-              class: 'custom-message',
-            }"
-            class="p-button-rounded p-button-text p-button-plain"
-            icon="pi pi-folder-open"
-            @click="moveIntoFolder"
-          ></Button>
         </template>
       </Tree>
     </div>
@@ -253,6 +258,30 @@ const showError = () => {
         icon="pi pi-times"
         @click="showEditableArea = false"
       ></Button>
+
+      <InputText
+        v-if="showFolderForm"
+        v-tooltip.bottom="{
+          value: `Enter name of folder to create`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        class="pi pi-folder"
+        type="text"
+        v-model="folderName"
+        placeholder="Untitled Folder"
+      ></InputText>
+      <Button
+        v-if="showFolderForm"
+        v-tooltip.bottom="{
+          value: `Create`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-plus"
+        @click="showFolderForm = false"
+      ></Button>
+
       <EditableDocument
         v-if="showEditableArea"
         :renderText="showHTML"

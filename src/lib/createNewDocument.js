@@ -4,7 +4,7 @@ import { useCurrentUser } from "vuefire";
 import { db } from "@/main"; //firestore instance
 import getShareableLink from "@/lib/getShareableLink.js";
 
-export default async function createNewDocument(docName, text, html) {
+export default async function createNewDocument(docName, text, html, path) {
   const userID = useCurrentUser()?.value?.uid;
   //create new document
   const newDocRef = doc(collection(db, "users/" + userID + "/docs"));
@@ -13,6 +13,7 @@ export default async function createNewDocument(docName, text, html) {
     docName: docName,
     textString: text,
     htmlString: html,
+    folderPath: path,
     timeStamp: serverTimestamp(),
     docURL: await getShareableLink(newDocRef.id),
   });
