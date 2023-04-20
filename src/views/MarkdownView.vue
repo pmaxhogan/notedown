@@ -36,8 +36,8 @@ const showShareDialog = ref(false);
 const copyConfirmed = ref(false);
 const showDeleteDialog = ref(false);
 const deleteConfirmed = ref(false);
-const showHTML = ref(false); //toggle HTML preview
-const showEditableDocument = ref(false); //toggle editable area
+const showHTML = ref(false);
+const showEditableArea = ref(false);
 
 //specify download format
 const HTMLonly = ref(false);
@@ -53,7 +53,7 @@ const currDocRef = ref("");
 //user inputs
 const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
-const name = ref("Untitled Document"); //document name
+const name = ref(""); //document name
 
 //reference to the subcollection
 const cRef = useCollection(
@@ -61,60 +61,33 @@ const cRef = useCollection(
 );
 
 const nodes = computed(() => {
-  const temp = {
-    key: "0",
-    label: "Default",
-    icon: "pi pi-folder",
-    children: cRef.value.map((cref) => ({
-      key: cref.id,
-      icon: "pi pi-file",
-      label: cref.docName,
-      data: cref.docURL,
-      currText: cref.textString,
-      type: "url",
-    })),
-  };
-  return [temp];
+  return [
+    {
+      key: "Default",
+      label: "Default",
+      icon: "pi pi-folder",
+      children: cRef.value.map((cref) => ({
+        key: cref.id,
+        icon: "pi pi-file",
+        label: cref.docName,
+        data: cref.docURL,
+        currText: cref.textString,
+        type: "url",
+      })),
+    },
+  ];
 });
 
-/*
-//Reactive array to hold folder tree nodes
-const nodes = ref([
-  {
-    key: "0",
-    label: "Default",
-    icon: "pi pi-folder",
-    children: [],
-  },
-]);
-//sorts the documents in subcollection in order of creation/update
-//checks for changes to documents in a collection
-onSnapshot(query(cRef, orderBy("timeStamp", "asc")), (snapshot) => {
-  //loop through collection to identify changes then push changes as new tree nodes
-  snapshot.docChanges().forEach((change) => {
-    //push change onto stack
-    if (change.type === "added") {
-      nodes.value[0].children.push({
-        key: change.doc.id,
-        icon: "pi pi-file",
-        label: change.doc.data().docName,
-        data: change.doc.data().docURL,
-        currText: change.doc.data().textString,
-        type: "url",
-      });
-    }
-    //pop change from stack
-    if (change.type === "removed") {
-      nodes.value[0].children.pop();
-    }
-    //console.log(nodes.value[0].children);
-  });
-});
-*/
 //opens selected document in EditableDocument
-const onNodeSelect = (node) => {
-  showEditableDocument.value = true;
-  text.value = node.currText;
+const editDocument = (node) => {
+  if (node.key != "Default") {
+    showEditableArea.value = true;
+
+    //update file text, file name, and document ID
+    text.value = node.currText;
+    name.value = node.label;
+    currDocRef.value = node.key;
+  }
 };
 
 //actions for document download
@@ -145,7 +118,7 @@ const newButtonItems = [
     label: "New Document",
     icon: "pi pi-file",
     command: () => {
-      showEditableDocument.value = !showEditableDocument.value;
+      showEditableArea.value = true;
       currDocRef.value = "";
     },
   },
@@ -189,7 +162,7 @@ async function addToDatabase() {
 
 //save changes to document
 function updateInDatabase() {
-  updateDocument(text.value, html.value, currDocRef.value);
+  updateDocument(name.value, text.value, html.value, currDocRef.value);
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
 
@@ -201,8 +174,14 @@ function deleteInDatabase() {
 }
 
 //create new folder
-function createNewCollection() {
-  //call lib method that communicates with firebase
+function createNewCollection() {}
+
+//move document into a new folder
+function moveIntoFolder() {
+  //display dialog with folders from a drop down menu
+  //containing list of current folders
+  //have user select a folder from the menu
+  //update nodes???
 }
 
 //copy text to clipboard
@@ -220,8 +199,6 @@ const showError = () => {
     life: 3000,
   });
 };
-
-const loading = ref(false);
 </script>
 
 <template>
@@ -231,11 +208,17 @@ const loading = ref(false);
         :value="nodes"
         class="w-full md:w-30rem"
         selectionMode="single"
-        :loading="loading"
-        @nodeSelect="onNodeSelect"
+        @nodeSelect="editDocument"
       >
         <template #default="slotProps">
-          <span>{{ slotProps.node.label }}</span>
+          <span
+            v-tooltip.bottom="{
+              value: `Click to Edit Document`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            >{{ slotProps.node.label }}</span
+          >
           <Button
             v-if="slotProps.node.data"
             v-tooltip.bottom="{
@@ -258,41 +241,54 @@ const loading = ref(false);
           <Button
             v-if="slotProps.node.data"
             v-tooltip.bottom="{
-              value: `Edit`,
+              value: `Move to Folder`,
               escape: true,
               class: 'custom-message',
             }"
             class="p-button-rounded p-button-text p-button-plain"
-            icon="pi pi-pencil"
-            @click="onNodeSelect"
+            icon="pi pi-folder-open"
+            @click="moveIntoFolder"
           ></Button>
         </template>
       </Tree>
     </div>
     <div class="main-window">
+      <!--disable create new button if EditableDocument is open-->
       <SplitButton
         v-tooltip.bottom="{
           value: `Select from Dropdown`,
           escape: true,
           class: 'custom-message',
         }"
+        :disabled="showEditableArea"
         :model="newButtonItems"
         icon="pi pi-plus"
         label="New"
         @click="newButtonItems[0].command"
       ></SplitButton>
+      <Button
+        v-if="showEditableArea"
+        v-tooltip.bottom="{
+          value: `Close Document`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-times"
+        @click="showEditableArea = false"
+      ></Button>
 
       <EditableDocument
-        v-if="showEditableDocument"
+        v-if="showEditableArea"
         :renderText="showHTML"
-        :content="text"
+        :fileContent="text"
+        :fileName="name"
         @html="(newHtml) => (html = newHtml)"
         @name="(newName) => (name = newName)"
         @text="(newText) => (text = newText)"
         @error="showError"
       ></EditableDocument>
 
-      <span v-if="showEditableDocument" class="p-buttonset">
+      <span v-if="showEditableArea" class="p-buttonset">
         <Button
           v-tooltip.bottom="{
             value: `Preview`,
@@ -304,7 +300,7 @@ const loading = ref(false);
         ></Button>
         <Button
           v-tooltip.bottom="{
-            value: `Save as New`,
+            value: `Save as New Document`,
             escape: true,
             class: 'custom-message',
           }"
@@ -330,7 +326,7 @@ const loading = ref(false);
           :disabled="!currDocRef"
           icon="pi pi-trash"
           @click="
-            showDeleteDialog = !showDeleteDialog;
+            showDeleteDialog = true;
             deleteConfirmed = false;
           "
         ></Button>
@@ -343,7 +339,7 @@ const loading = ref(false);
           :disabled="!currDocRef"
           icon="pi pi-link"
           @click="
-            showShareDialog = !showShareDialog;
+            showShareDialog = true;
             copyConfirmed = false;
           "
         ></Button>
@@ -362,9 +358,7 @@ const loading = ref(false);
 
     <Dialog position="center" v-model:visible="showDeleteDialog">
       <template #header>
-        <h3 v-if="deleteConfirmed">
-          Document Permanently Deleted. Click to Close
-        </h3>
+        <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
         <h3 v-else>Are you sure?</h3>
       </template>
       <p v-if="!deleteConfirmed">
@@ -375,7 +369,7 @@ const loading = ref(false);
           v-if="!deleteConfirmed"
           label="No"
           icon="pi pi-times"
-          @click="showDeleteDialog = !showDeleteDialog"
+          @click="showDeleteDialog = false"
         ></Button>
         <Button
           v-if="!deleteConfirmed"
@@ -388,8 +382,8 @@ const loading = ref(false);
           label="Close"
           icon="pi pi-times"
           @click="
-            showDeleteDialog = !showDeleteDialog;
-            showEditableDocument = !showEditableDocument;
+            showDeleteDialog = false;
+            showEditableArea = false;
           "
         ></Button>
       </template>
@@ -416,7 +410,7 @@ const loading = ref(false);
         <Button
           v-if="copyConfirmed"
           @click="
-            showShareDialog = !showShareDialog;
+            showShareDialog = false;
             copyConfirmed = false;
           "
           label="Close"
@@ -459,6 +453,6 @@ textarea {
   display: flex;
 }
 .file-tree {
-  flex-basis: 20%;
+  flex-basis: 27%;
 }
 </style>
