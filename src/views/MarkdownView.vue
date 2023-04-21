@@ -9,6 +9,7 @@ import download from "@/lib/download.js";
 import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
 import deleteDocument from "@/lib/deleteDocument.js";
+import createFolder from "@/lib/createFolder.js";
 
 //Vue components
 import EditableDocument from "@/components/EditableDocument.vue";
@@ -50,17 +51,25 @@ const link = ref("");
 
 //document, folder references
 const currDocRef = ref("");
-const folderName = ref("Untitled Folder");
+const folderName = ref("");
+const folderRef = ref("");
 
 //user inputs into editable area
 const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref(""); //document name
 
-//reference to the subcollection
+//reference to the docs subcollection
 const cRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")
 );
+
+//reference to the folders document
+const fRef = useCollection(
+  collection(db, "users/" + useCurrentUser()?.value?.uid + "/folders")
+);
+
+let folderCounter = 0;
 
 const nodes = computed(() => {
   return [
@@ -74,17 +83,24 @@ const nodes = computed(() => {
         label: cref.docName,
         data: cref.docURL,
         currText: cref.textString,
+        path: cRef.folderPath,
         type: "url",
       })),
     },
-    {
-      key: "1",
-      label: folderName.value,
+    ...fRef.value.map((fref) => ({
+      key: ""+ ++folderCounter,
       icon: "pi pi-folder",
+      label: fref.fName,
       children: [],
-    },
+    })),
   ];
 });
+
+function addFolder() {
+  showFolderForm.value = false;
+  folderRef.value = createFolder(folderName.value);
+  folderName.value = "";
+}
 
 //opens selected document in EditableDocument
 const editDocument = (node) => {
@@ -161,14 +177,14 @@ async function addToDatabase() {
     name.value,
     text.value,
     html.value,
-    "Default"
+    fRef.value[0]
   );
   console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
 
 //save changes to document
 function updateInDatabase() {
-  updateDocument(name.value, text.value, html.value, currDocRef.value);
+  updateDocument(name.value, text.value, html.value, currDocRef.value, "Default");
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
 
@@ -279,7 +295,7 @@ const showError = () => {
           class: 'custom-message',
         }"
         icon="pi pi-plus"
-        @click="showFolderForm = false"
+        @click="addFolder"
       ></Button>
 
       <EditableDocument
@@ -358,77 +374,77 @@ const showError = () => {
           @click="initiateDownload"
         ></SplitButton>
       </span>
-    
-    <Dialog position="center" v-model:visible="showDeleteDialog">
-      <template #header>
-        <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
-        <h3 v-else>Are you sure?</h3>
-      </template>
-      <p v-if="!deleteConfirmed">
-        This action will permanently delete the document.
-      </p>
-      <template #footer>
-        <Button
-          v-if="!deleteConfirmed"
-          label="No"
-          icon="pi pi-times"
-          @click="showDeleteDialog = false"
-        ></Button>
-        <Button
-          v-if="!deleteConfirmed"
-          label="Delete"
-          icon="pi pi-trash"
-          @click="deleteInDatabase"
-        ></Button>
-        <Button
-          v-else
-          label="Close"
-          icon="pi pi-times"
-          @click="
-            showDeleteDialog = false;
-            showEditableArea = false;
-          "
-        ></Button>
-      </template>
-    </Dialog>
-    <Dialog position="center" v-model:visible="showShareDialog">
-      <template #header>
-        <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
-        <h3 v-else>Invite Others to View Your NoteDown</h3>
-      </template>
-      <LinkGenerator
-        @shareableLink="(newLink) => (link = newLink)"
-        :docId="currDocRef"
-      ></LinkGenerator>
-      <textarea
-        v-if="!copyConfirmed"
-        class="displayLinkArea"
-        v-on:focus="$event.target.select()"
-        ref="clone"
-        readonly
-        :value="link"
-      ></textarea>
-      <template #footer>
-        <Button
-          v-if="copyConfirmed"
-          @click="
-            showShareDialog = false;
-            copyConfirmed = false;
-          "
-          label="Close"
-          icon="pi pi-times"
-        ></Button>
-        <Button
-          v-else
-          @click="copyToClipboard"
-          label="Copy"
-          icon="pi pi-link"
-        ></Button>
-      </template>
-    </Dialog>
-    <Toast ref="toast" />
+
+      <Dialog position="center" v-model:visible="showDeleteDialog">
+        <template #header>
+          <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
+          <h3 v-else>Are you sure?</h3>
+        </template>
+        <p v-if="!deleteConfirmed">
+          This action will permanently delete the document.
+        </p>
+        <template #footer>
+          <Button
+            v-if="!deleteConfirmed"
+            label="No"
+            icon="pi pi-times"
+            @click="showDeleteDialog = false"
+          ></Button>
+          <Button
+            v-if="!deleteConfirmed"
+            label="Delete"
+            icon="pi pi-trash"
+            @click="deleteInDatabase"
+          ></Button>
+          <Button
+            v-else
+            label="Close"
+            icon="pi pi-times"
+            @click="
+              showDeleteDialog = false;
+              showEditableArea = false;
+            "
+          ></Button>
+        </template>
+      </Dialog>
+      <Dialog position="center" v-model:visible="showShareDialog">
+        <template #header>
+          <h3 v-if="copyConfirmed">Link Copied! Click to Close</h3>
+          <h3 v-else>Invite Others to View Your NoteDown</h3>
+        </template>
+        <LinkGenerator
+          @shareableLink="(newLink) => (link = newLink)"
+          :docId="currDocRef"
+        ></LinkGenerator>
+        <textarea
+          v-if="!copyConfirmed"
+          class="displayLinkArea"
+          v-on:focus="$event.target.select()"
+          ref="clone"
+          readonly
+          :value="link"
+        ></textarea>
+        <template #footer>
+          <Button
+            v-if="copyConfirmed"
+            @click="
+              showShareDialog = false;
+              copyConfirmed = false;
+            "
+            label="Close"
+            icon="pi pi-times"
+          ></Button>
+          <Button
+            v-else
+            @click="copyToClipboard"
+            label="Copy"
+            icon="pi pi-link"
+          ></Button>
+        </template>
+      </Dialog>
+      <Toast ref="toast" />
+    </div>
   </div>
-</div>
 </template>
 <style lang="scss">
 textarea {
@@ -462,10 +478,10 @@ textarea {
   flex-basis: 27%;
   border-right: solid 1.5px rgb(232, 232, 232);
 }
-.main-window{
+.main-window {
   width: 100%;
 }
-.p-buttonset{
+.p-buttonset {
   display: flex;
   justify-content: center;
 }

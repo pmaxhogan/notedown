@@ -8,7 +8,13 @@ import {
 import { useCurrentUser } from "vuefire";
 import { db } from "@/main"; //firestore instance
 
-export default async function updateDocument(name, text, html, documentID) {
+export default async function updateDocument(
+  name,
+  text,
+  html,
+  documentID,
+  path
+) {
   //get reference to currently open document
   const userID = useCurrentUser()?.value?.uid;
   const currDocRef = doc(
@@ -20,6 +26,7 @@ export default async function updateDocument(name, text, html, documentID) {
     docName: name,
     textString: text,
     htmlString: html,
+    folderPath: path,
     timeStamp: serverTimestamp(),
   });
 }
