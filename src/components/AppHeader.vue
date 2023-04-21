@@ -51,7 +51,9 @@ onMounted(() => {
       <ul>
         <li><RouterLink to="/about" class="text">About</RouterLink></li>
         <li>
-          <RouterLink v-if="user" class="text" to="/markdown">Home</RouterLink>
+          <RouterLink v-if="user" class="text" to="/markdown"
+            >Markdown</RouterLink
+          >
         </li>
         <li v-if="user">
           <div class="userProfile">
