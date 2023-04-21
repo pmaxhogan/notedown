@@ -10,6 +10,8 @@ import createNewDocument from "@/lib/createNewDocument.js";
 import updateDocument from "@/lib/updateDocument.js";
 import deleteDocument from "@/lib/deleteDocument.js";
 import createFolder from "@/lib/createFolder.js";
+import renameFolder from "@/lib/renameFolder.js";
+import deleteFolder from "@/lib/deleteFolder.js";
 
 //Vue components
 import EditableDocument from "@/components/EditableDocument.vue";
@@ -40,6 +42,9 @@ const deleteConfirmed = ref(false);
 const showHTML = ref(false);
 const showEditableArea = ref(false);
 const showFolderForm = ref(false);
+const showEditForm = ref(false);
+const editFolder = ref(false);
+const delFolder = ref(false);
 
 //specify download format
 const HTMLonly = ref(false);
@@ -69,29 +74,36 @@ const fRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/folders")
 );
 
-let folderCounter = 0;
+const folderCounter = ref(0);
+const docCounter = ref(0);
 
 const nodes = computed(() => {
   return [
     {
       key: "0",
-      label: "Default",
+      label: "Default Folder",
       icon: "pi pi-folder",
+      customParent: false,
       children: cRef.value.map((cref) => ({
-        key: cref.id,
+        key: "0" + docCounter.value++,
+        nodeId: cref.id,
         icon: "pi pi-file",
         label: cref.docName,
         data: cref.docURL,
         currText: cref.textString,
         path: cRef.folderPath,
         type: "url",
+        docTag: true,
       })),
     },
     ...fRef.value.map((fref) => ({
-      key: ""+ ++folderCounter,
+      key: "" + ++folderCounter.value,
+      nodeId: fref.id,
       icon: "pi pi-folder",
+      customParent: true,
       label: fref.fName,
       children: [],
+      docTag: false,
     })),
   ];
 });
@@ -103,13 +115,24 @@ function addFolder() {
 }
 
 //opens selected document in EditableDocument
-const editDocument = (node) => {
-  if (node.key.length > 1) {
+const onNodeSelect = (node) => {
+  const nodeRef = node.nodeId;
+  if (node.docTag) {
     showEditableArea.value = true;
     //update file text, file name, and document ID
     text.value = node.currText;
     name.value = node.label;
-    currDocRef.value = node.key;
+    currDocRef.value = node.nodeId;
+  }
+  if (delFolder.value) {
+    deleteFolder(nodeRef);
+    --folderCounter.value;
+    delFolder.value = false;
+  }
+  if (editFolder.value) {
+    showEditForm.value = false;
+    renameFolder(nodeRef, folderName.value);
+    editFolder.value = false;
   }
 };
 
@@ -184,7 +207,13 @@ async function addToDatabase() {
 
 //save changes to document
 function updateInDatabase() {
-  updateDocument(name.value, text.value, html.value, currDocRef.value, "Default");
+  updateDocument(
+    name.value,
+    text.value,
+    html.value,
+    currDocRef.value,
+    "Default"
+  );
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
 
@@ -192,6 +221,7 @@ function updateInDatabase() {
 function deleteInDatabase() {
   deleteDocument(currDocRef.value);
   console.log("Permanently deleted Document ID: ", currDocRef.value);
+  --docCounter.value;
   deleteConfirmed.value = true;
 }
 
@@ -217,7 +247,7 @@ const showError = () => {
         :value="nodes"
         class="w-full md:w-30rem"
         selectionMode="single"
-        @nodeSelect="editDocument"
+        @nodeSelect="onNodeSelect"
       >
         <template #default="slotProps">
           <span
@@ -243,10 +273,54 @@ const showError = () => {
                   '/viewdoc/' +
                     useCurrentUser()?.value?.uid +
                     '/' +
-                    slotProps.node.key
+                    slotProps.node.nodeId
                 )
             "
           ></Button>
+          <div v-if="!slotProps.node.docTag && slotProps.node.customParent">
+            <Button
+              v-tooltip.bottom="{
+                value: `Permanently Delete Folder`,
+                escape: true,
+                class: 'custom-message',
+              }"
+              class="p-button-rounded p-button-text p-button-plain"
+              icon="pi pi-trash"
+              @click="delFolder = true"
+            ></Button>
+            <Button
+              v-tooltip.bottom="{
+                value: `Edit Folder Name`,
+                escape: true,
+                class: 'custom-message',
+              }"
+              class="p-button-rounded p-button-text p-button-plain"
+              icon="pi pi-pencil"
+              @click="showEditForm = true"
+            ></Button>
+            <InputText
+              v-if="showEditForm"
+              v-tooltip.bottom="{
+                value: `Enter name of folder to rename`,
+                escape: true,
+                class: 'custom-message',
+              }"
+              class="pi pi-folder"
+              type="text"
+              v-model="folderName"
+              placeholder="Untitled Folder"
+            ></InputText>
+            <Button
+              v-if="showEditForm"
+              v-tooltip.bottom="{
+                value: `Rename`,
+                escape: true,
+                class: 'custom-message',
+              }"
+              icon="pi pi-pencil"
+              @click="editFolder = true"
+            ></Button>
+          </div>
         </template>
       </Tree>
     </div>
