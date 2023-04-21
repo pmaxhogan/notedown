@@ -58,7 +58,7 @@ const link = ref("");
 const currDocRef = ref("");
 const folderName = ref("");
 const folderRef = ref("");
-const selectedFolder = ref("");
+const selectedFolder = ref(null);
 
 //user inputs into editable area
 const html = ref(""); //HTML rendered string
@@ -118,7 +118,6 @@ function addFolder() {
 //opens selected document in EditableDocument
 const onNodeSelect = (node) => {
   const nodeRef = node.nodeId;
-  selectedFolder.value = nodeRef;
   if (node.docTag) {
     showEditableArea.value = true;
     //update file text, file name, and document ID
@@ -135,7 +134,9 @@ const onNodeSelect = (node) => {
     showEditForm.value = false;
     renameFolder(nodeRef, folderName.value);
     editFolder.value = false;
-    selectedFolder.value = "";
+    selectedFolder.value = null;
+  } else {
+    selectedFolder.value = nodeRef;
   }
 };
 
