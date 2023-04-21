@@ -58,6 +58,8 @@ const link = ref("");
 const currDocRef = ref("");
 const folderName = ref("");
 const folderRef = ref("");
+const selectedFolder = ref(null);
+
 
 //user inputs into editable area
 const html = ref(""); //HTML rendered string
@@ -133,6 +135,9 @@ const onNodeSelect = (node) => {
     showEditForm.value = false;
     renameFolder(nodeRef, folderName.value);
     editFolder.value = false;
+    selectedFolder.value = null;
+  } else {
+    selectedFolder.value = nodeRef;
   }
 };
 
@@ -299,16 +304,16 @@ const showError = () => {
               @click="showEditForm = true"
             ></Button>
             <InputText
-              v-if="showEditForm"
-              v-tooltip.bottom="{
-                value: `Enter name of folder to rename`,
-                escape: true,
-                class: 'custom-message',
-              }"
-              class="pi pi-folder"
-              type="text"
-              v-model="folderName"
-              placeholder="Untitled Folder"
+            v-if="showEditForm && selectedFolder === slotProps.node.nodeId"
+            v-tooltip.bottom="{
+            value: `Enter name of folder to rename`,
+            escape: true,
+            class: 'custom-message',
+            }"
+            class="pi pi-folder"
+            type="text"
+            v-model="folderName"
+            placeholder="Untitled Folder"
             ></InputText>
             <Button
               v-if="showEditForm"
