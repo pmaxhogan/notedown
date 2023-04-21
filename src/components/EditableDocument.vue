@@ -1,6 +1,3 @@
-
- 
-
 <script setup>
 import MarkdownRenderer from "../components/MarkdownRenderer.vue";
 import { computed, ref, watchEffect } from "vue";
@@ -42,39 +39,39 @@ watchEffect(() => {
 <template>
   <div class="container">
     <div>
-    <textarea
-      class="edit-filename"
-      :class="{ 'invalid-name': invalidDocumentName }"
-      type="text"
-      placeholder="Untitled Document"
-      required="required"
-      v-model="documentName"
-    ></textarea>
-    <div v-if="invalidDocumentName" class="error-message">
-      Document name should not be empty or start with a special character.
+      <textarea
+        class="edit-filename"
+        :class="{ 'invalid-name': invalidDocumentName }"
+        type="text"
+        placeholder="Untitled Document"
+        required="required"
+        v-model="documentName"
+      ></textarea>
+      <div v-if="invalidDocumentName" class="error-message">
+        Document name should not be empty or start with a special character.
+      </div>
+
+      <textarea
+        class="editable-area"
+        type="text"
+        placeholder="Start Typing!"
+        v-model="contentToRender"
+      ></textarea>
+
+      <MarkdownRenderer
+        v-show="props?.renderText"
+        :content="contentToRender"
+        @html="emit('html', $event)"
+        @error="emit('error', $event)"
+      ></MarkdownRenderer>
     </div>
-
-    <textarea
-      class="editable-area"
-      type="text"
-      placeholder="Start Typing!"
-      v-model="contentToRender"
-    ></textarea>
-
-    <MarkdownRenderer
-      v-show="props?.renderText"
-      :content="contentToRender"
-      @html="emit('html', $event)"
-      @error="emit('error', $event)"
-    ></MarkdownRenderer>
   </div>
-</div>
 </template>
 <style scoped>
-.container{
+.container {
   width: 100%;
   height: 75vh;
-  display: flex; 
+  display: flex;
   justify-content: center;
   margin-bottom: 25px;
 }
@@ -98,7 +95,7 @@ watchEffect(() => {
 }
 .edit-filename,
 .editable-area {
-  border: 0.8px solid ;
+  border: 0.8px solid;
   border-radius: 4px;
   border-color: #dac7e8;
   overflow: auto;

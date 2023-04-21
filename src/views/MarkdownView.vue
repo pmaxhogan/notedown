@@ -51,14 +51,14 @@ const HTMLonly = ref(false);
 const MDonly = ref(false);
 
 //link share, copy to clipboard
-const clone = ref(null);
+const clone = ref("");
 const link = ref("");
 
 //document, folder references
 const currDocRef = ref("");
 const folderName = ref("");
 const folderRef = ref("");
-const selectedFolder = ref(null);
+const selectedFolder = ref("");
 
 //user inputs into editable area
 const html = ref(""); //HTML rendered string
@@ -118,6 +118,7 @@ function addFolder() {
 //opens selected document in EditableDocument
 const onNodeSelect = (node) => {
   const nodeRef = node.nodeId;
+  selectedFolder.value = nodeRef;
   if (node.docTag) {
     showEditableArea.value = true;
     //update file text, file name, and document ID
@@ -134,9 +135,7 @@ const onNodeSelect = (node) => {
     showEditForm.value = false;
     renameFolder(nodeRef, folderName.value);
     editFolder.value = false;
-    selectedFolder.value = null;
-  } else {
-    selectedFolder.value = nodeRef;
+    selectedFolder.value = "";
   }
 };
 
@@ -350,7 +349,12 @@ const showError = () => {
           class: 'custom-message',
         }"
         icon="pi pi-times"
-        @click="showEditableArea = false"
+        @click="
+          showEditableArea = false;
+          name = '';
+          text = '';
+          html = '';
+        "
       ></Button>
 
       <InputText
