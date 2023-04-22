@@ -73,7 +73,8 @@ watchEffect(() => {
   height: 75vh;
   display: flex;
   justify-content: center;
-  margin-bottom: 25px;
+  margin-bottom: 40px;
+  margin-top: 20px;
 }
 .edit-filename {
   text-justify: center;
@@ -87,8 +88,8 @@ watchEffect(() => {
   padding-top: 6px;
 }
 .editable-area {
-  min-height: 200px;
-  min-height: 470px;
+  height: 470px;
+  max-height: 470px;
   width: 120vh;
   resize: vertical;
   padding: 1rem;

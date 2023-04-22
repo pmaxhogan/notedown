@@ -267,6 +267,44 @@ function open(url) {
 </script>
 <template>
   <div class="markdown">
+    <div class="left">
+      <div class="newBtn">
+      <SplitButton
+        v-tooltip.bottom="{
+          value: `Select from Dropdown`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        :disabled="showEditableArea"
+        :model="newButtonItems"
+        icon="pi pi-plus"
+        label="New"
+        @click="newButtonItems[0].command"
+      ></SplitButton>
+
+      <InputText
+        v-if="showFolderForm"
+        v-tooltip.bottom="{
+          value: `Enter name of folder to create`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        class="pi pi-folder"
+        type="text"
+        v-model="folderName"
+        placeholder="Untitled Folder"
+      ></InputText>
+      <Button
+        v-if="showFolderForm"
+        v-tooltip.bottom="{
+          value: `Create`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-plus"
+        @click="addFolder"
+      ></Button>
+    </div>
     <div class="file-tree">
       <Tree
         :value="nodes"
@@ -349,8 +387,10 @@ function open(url) {
         </template>
       </Tree>
     </div>
+  </div>
     <div class="main-window">
       <!--disable create new button if EditableDocument is open-->
+      <!-- <div class="newBtn">
       <SplitButton
         v-tooltip.bottom="{
           value: `Select from Dropdown`,
@@ -401,7 +441,7 @@ function open(url) {
         icon="pi pi-plus"
         @click="addFolder"
       ></Button>
-
+    </div> -->
       <EditableDocument
         v-if="showEditableArea"
         :renderText="showHTML"
@@ -413,6 +453,24 @@ function open(url) {
         @error="showError"
       ></EditableDocument>
       <span v-if="showEditableArea" class="p-buttonset">
+        <div class="close">
+          <Button 
+        v-if="showEditableArea"
+        v-tooltip.bottom="{
+          value: `Close Document`,
+          escape: true,
+          class: 'custom-message',
+        }"
+        icon="pi pi-times"
+        @click="
+          showEditableArea = false;
+          name = '';
+          text = '';
+          html = '';
+        "
+      ></Button>
+        </div>
+        <div class="options">
         <Button
           v-tooltip.bottom="{
             value: `Preview`,
@@ -467,7 +525,7 @@ function open(url) {
             copyConfirmed = false;
           "
         ></Button>
-        <SplitButton
+        <SplitButton class="download"
           v-tooltip.bottom="{
             value: `Download`,
             escape: true,
@@ -477,8 +535,9 @@ function open(url) {
           icon="pi pi-download"
           @click="initiateDownload"
         ></SplitButton>
+        </div>
       </span>
-
+    
       <Dialog position="center" v-model:visible="showDeleteDialog">
         <template #header>
           <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
@@ -581,8 +640,8 @@ textarea {
 }
 
 .file-tree {
-  width: 19vw;
-  height: 100%;
+  width: 100%;
+  height: 95vh;
   flex-basis: 27%;
   border-right: solid 1.5px rgb(232, 232, 232);
 }
@@ -594,5 +653,25 @@ textarea {
 .p-buttonset {
   display: flex;
   justify-content: center;
+  width: 100%;
+  justify-content: space-between;
+
 }
+.newBtn{
+  width: 100%;
+  height: 45px;
+  display: flex;
+  background-color:#322467;
+}
+.w-full{
+  border-radius: 0px 0px 5px 0px;
+}
+.close{
+  margin-left: 200px;
+}
+.options{
+  margin-right: 200px;
+}
+
+
 </style>
