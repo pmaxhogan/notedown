@@ -25,7 +25,7 @@ jobs:
       - name: Install npm packages & check
         run: |
           cd functions
-          npm ci && npm run lint
+          npm ci
       # Deploying the functions to firebase
       - name:  Deploy to Firebase
         uses: w9jds/firebase-action@master

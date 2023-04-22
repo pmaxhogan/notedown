@@ -133,13 +133,11 @@ const onNodeSelect = (node) => {
       name.value = node.label;
       currDocRef.value = node.nodeId;
     }, 0);
-  }
-  if (delFolder.value) {
+  } else if (delFolder.value) {
     deleteFolder(nodeRef);
     --folderCounter.value;
     delFolder.value = false;
-  }
-  if (editFolder.value) {
+  } else if (editFolder.value) {
     showEditForm.value = false;
     renameFolder(nodeRef, folderName.value);
     editFolder.value = false;
