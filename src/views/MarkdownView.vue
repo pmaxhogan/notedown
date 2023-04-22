@@ -99,7 +99,7 @@ const nodes = computed(() => {
       })),
     },
     ...fRef.value.map((fref) => ({
-      key: "" + ++folderCounter.value,
+      key: "" + ++folderCounter.value, //folderCounter.value++,
       nodeId: fref.id,
       icon: "pi pi-folder",
       customParent: true,
