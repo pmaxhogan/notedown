@@ -12,9 +12,22 @@ const route = useRoute();
 const user = useCurrentUser();
 
 onMounted(() => {
-  watch(user, (user, prevUser) => {
-    console.log("user changed", user, prevUser);
-    if (!user && route.path !== "/about") {
+  watch([user, route], ([user]) => {
+    console.log(
+      "user changed",
+      user,
+      !user,
+      route.path !== "/about",
+      !route.path.includes("/viewdoc/"),
+      route.path !== "/"
+    );
+    if (
+      user === null &&
+      route.path !== "/about" &&
+      !route.path.includes("/viewdoc/") &&
+      route.path !== "/"
+    ) {
+      console.log("user logged out", route.path);
       // user logged out
       router.push("/about");
     }
@@ -25,7 +38,16 @@ onMounted(() => {
 <template>
   <AppHeader />
   <main>
-    <RouterView />
+    <Suspense>
+      <template #default>
+        <RouterView />
+      </template>
+      <template #fallback>
+        <div class="loading">
+          <div class="loading__spinner"></div>
+        </div>
+      </template>
+    </Suspense>
   </main>
   <Footer></Footer>
 </template>
@@ -37,8 +59,7 @@ html {
   background: #322467;
 }
 
-main{
-
+main {
   background: rgb(254, 252, 255);
   margin: 0 auto;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);

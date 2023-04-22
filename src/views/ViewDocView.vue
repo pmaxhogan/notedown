@@ -17,6 +17,8 @@ const route = useRoute();
 const docId = route.params.docid;
 const userId = route.params.uid;
 
+console.log("doc", docId, userId);
+
 if (typeof docId === "undefined" || typeof userId === "undefined") {
   throw new Error("docId or userId is undefined");
 }

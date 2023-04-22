@@ -31,6 +31,7 @@ import { db } from "@/main";
 import router from "@/router";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
+import awaitSignedIn from "@/lib/awaitSignedIn";
 
 const toast = useToast();
 
@@ -65,6 +66,7 @@ const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref(""); //document name
 
+await awaitSignedIn();
 //reference to the docs subcollection
 const cRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")

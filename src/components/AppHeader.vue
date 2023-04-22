@@ -33,7 +33,6 @@ function dropdown() {
 }
 // ref that stores the user document as an object from firebase, or null if not logged in etc
 let userDocRef = ref(null);
-console.log(userDocRef?.value, user?.value?.uid);
 onMounted(() => {
   watch(user, (user) => {
     if (user?.uid) {
