@@ -28,7 +28,6 @@ import InputText from "primevue/inputtext";
 import { useCollection, useCurrentUser } from "vuefire";
 import { collection } from "firebase/firestore";
 import { db } from "@/main";
-import router from "@/router";
 import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import awaitSignedIn from "@/lib/awaitSignedIn";
@@ -122,11 +121,18 @@ const onNodeSelect = (node) => {
   const nodeRef = node.nodeId;
   selectedFolder.value = nodeRef;
   if (node.docTag) {
-    showEditableArea.value = true;
-    //update file text, file name, and document ID
-    text.value = node.currText;
-    name.value = node.label;
-    currDocRef.value = node.nodeId;
+    console.log("selected document:", node);
+    showEditableArea.value = false;
+    name.value = "";
+    text.value = "";
+    html.value = "";
+    setTimeout(() => {
+      showEditableArea.value = true;
+      //update file text, file name, and document ID
+      text.value = node.currText;
+      name.value = node.label;
+      currDocRef.value = node.nodeId;
+    }, 0);
   }
   if (delFolder.value) {
     deleteFolder(nodeRef);
@@ -244,6 +250,10 @@ const showError = () => {
     life: 3000,
   });
 };
+
+function open(url) {
+  window.open(url, "_blank");
+}
 </script>
 <template>
   <div class="markdown">
@@ -266,7 +276,7 @@ const showError = () => {
           <Button
             v-if="slotProps.node.data"
             v-tooltip.bottom="{
-              value: `Preview`,
+              value: `\Preview`,
               escape: true,
               class: 'custom-message',
             }"
@@ -274,7 +284,7 @@ const showError = () => {
             icon="pi pi-eye"
             @click="
               () =>
-                router.push(
+                open(
                   '/viewdoc/' +
                     useCurrentUser()?.value?.uid +
                     '/' +
@@ -553,7 +563,7 @@ textarea {
 }
 .markdown {
   display: flex;
-  height: 95vh;
+  min-height: 95vh;
   width: 100%;
 }
 .file-tree {
