@@ -424,7 +424,7 @@ function open(url) {
         ></Button>
         <Button
           v-tooltip.bottom="{
-            value: `Save as New Document`,
+            value: `Select Folder to Save As New Document in a Specific Folder`,
             escape: true,
             class: 'custom-message',
           }"
