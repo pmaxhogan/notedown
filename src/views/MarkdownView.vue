@@ -284,7 +284,7 @@ function open(url) {
             >{{ slotProps.node.label }}</span
           >
           <Button
-            v-if="slotProps.node.data"
+            v-if="slotProps.node.currText"
             v-tooltip.bottom="{
               value: `\Preview`,
               escape: true,
@@ -424,7 +424,7 @@ function open(url) {
         ></Button>
         <Button
           v-tooltip.bottom="{
-            value: `Select Folder to Save As New Document in a Specific Folder`,
+            value: `Select a Folder to Save as New`,
             escape: true,
             class: 'custom-message',
           }"
@@ -557,6 +557,7 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
+
 .displayLinkArea {
   width: 100%;
   height: 25px;
@@ -565,26 +566,31 @@ textarea {
   background-color: #fff9fe;
   border-color: #fff9fe;
 }
+
 .custom-message .p-tooltip-text {
   background-color: #e2d5ec;
   color: #000000;
   font-size: 11px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
+
 .markdown {
   display: flex;
   min-height: 95vh;
   width: 100%;
 }
+
 .file-tree {
   width: 19vw;
   height: 100%;
   flex-basis: 27%;
   border-right: solid 1.5px rgb(232, 232, 232);
 }
+
 .main-window {
   width: 100%;
 }
+
 .p-buttonset {
   display: flex;
   justify-content: center;
