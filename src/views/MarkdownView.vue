@@ -76,30 +76,22 @@ const fRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/folders")
 );
 
+const currentFolderId = ref("default");
 const folderCounter = ref(0);
 const docCounter = ref(0);
 
 const nodes = computed(() => {
-  return [
+  const folderNodes = [
     {
-      key: "0",
+      key: "default",
       label: "Default Folder",
       icon: "pi pi-folder",
+      nodeId: "default",
       customParent: false,
-      children: cRef.value.map((cref) => ({
-        key: "0" + docCounter.value++,
-        nodeId: cref.id,
-        icon: "pi pi-file",
-        label: cref.docName,
-        data: cref.docURL,
-        currText: cref.textString,
-        path: cRef.folderPath,
-        type: "url",
-        docTag: true,
-      })),
+      children: [],
     },
     ...fRef.value.map((fref) => ({
-      key: "" + ++folderCounter.value, //folderCounter.value++,
+      key: fref.id,
       nodeId: fref.id,
       icon: "pi pi-folder",
       customParent: true,
@@ -108,6 +100,23 @@ const nodes = computed(() => {
       docTag: false,
     })),
   ];
+
+  cRef.value.forEach((doc) => {
+    const folderId = doc.folderPath;
+    const folderNode = folderNodes.find((node) => node.nodeId === folderId);
+    if (folderNode) {
+      folderNode.children.push({
+        key: doc.id,
+        nodeId: doc.id,
+        icon: "pi pi-file",
+        label: doc.docName,
+        currText: doc.textString,
+        docTag: true,
+      });
+    }
+  });
+
+  return folderNodes;
 });
 
 function addFolder() {
@@ -142,6 +151,9 @@ const onNodeSelect = (node) => {
     renameFolder(nodeRef, folderName.value);
     editFolder.value = false;
     selectedFolder.value = "";
+  } else {
+    console.log("selected folder:", node);
+    currentFolderId.value = node.nodeId;
   }
 };
 
@@ -209,7 +221,7 @@ async function addToDatabase() {
     name.value,
     text.value,
     html.value,
-    fRef.value[0]
+    currentFolderId.value
   );
   console.log("Saved as new document with Document ID: ", currDocRef.value);
 }
@@ -221,7 +233,7 @@ function updateInDatabase() {
     text.value,
     html.value,
     currDocRef.value,
-    "Default"
+    currentFolderId.value
   );
   console.log("Changes written to Document ID: ", currDocRef.value);
 }
