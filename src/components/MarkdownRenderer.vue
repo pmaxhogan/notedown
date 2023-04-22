@@ -18,7 +18,9 @@ const MAX_CONTENT_LENGTH = 1000;
 watch(
   () => props.content,
   () => {
-    emit("error", "Content too long");
+    if (props.content.length > MAX_CONTENT_LENGTH) {
+      emit("error", "Content too long");
+    }
   }
 );
 if (props.content.length > MAX_CONTENT_LENGTH) {
