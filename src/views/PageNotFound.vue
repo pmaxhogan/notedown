@@ -3,8 +3,9 @@
 <template>
   <h1>404 Page</h1>
   <p>
-    Hello! Looks like you're trying to access a document that wasn't saved,
-    deleted, or doesn't exist. We recommend you check the link and try again.
+    Hello! Looks like you're trying to access a page that does not exist. 
+    This may be due to a broken link, document not existing, or incorrect link.
+    We recommend you check the link and try again.
   </p>
 </template>
 
