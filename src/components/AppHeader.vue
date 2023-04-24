@@ -48,9 +48,10 @@ onMounted(() => {
     <h1>NoteDown <font-awesome-icon icon="fa-solid fa-pen-to-square" /></h1>
     <nav class="navigation-items">
       <ul>
+        <li><RouterLink to="/" class="text"> </RouterLink></li>
         <li><RouterLink to="/about" class="text">About</RouterLink></li>
         <li>
-          <RouterLink v-if="user" class="text" to="/markdown">Home</RouterLink>
+          <RouterLink v-if="user" class="text" to="/home">Home</RouterLink>
         </li>
         <li v-if="user">
           <div class="userProfile">

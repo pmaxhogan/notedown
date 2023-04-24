@@ -32,6 +32,14 @@
     </section>
 
     <section class="subsection">
+      <h2>How do I write with Markdown?</h2>
+      <p>
+        Check out this handy Markdown guide:
+        https://www.markdownguide.org/getting-started/
+      </p>
+    </section>
+
+    <section class="subsection">
       <h2>Can I share my notes?</h2>
       <p>
         Absolutely! Notedown offers a built-in sharing feature that generates a
@@ -45,14 +53,12 @@
       <div class="contact-info">
         <div class="info-column">
           <p>Email: notedownadmin@notedown.com</p>
-          <p>Phone: +1 (123) 456-7890</p>
         </div>
         <div class="info-column">
           <p>
-            1234 Main Street<br />
-            Suite 567<br />
-            City, State, 12345<br />
-            Country
+            800 W Campbell Rd<br />
+            Richardson, TX 75080<br />
+            United States
           </p>
         </div>
       </div>
@@ -61,9 +67,9 @@
 </template>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Courgette&family=Dongle:wght@400;700&family=Fira+Sans:wght@500&family=Montserrat:ital,wght@0,400;0,500;1,600&family=Nunito:wght@500&family=Poppins:wght@400;500&display=swap');
-*{
-  font-family: 'Montserrat', sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Courgette&family=Dongle:wght@400;700&family=Fira+Sans:wght@500&family=Montserrat:ital,wght@0,400;0,500;1,600&family=Nunito:wght@500&family=Poppins:wght@400;500&display=swap");
+* {
+  font-family: "Montserrat", sans-serif;
 }
 .about h1 {
   font-size: 2.5rem;
@@ -75,10 +81,10 @@ h2 {
   font-size: 1.4rem;
   margin-bottom: 1rem;
 }
-h3{
+h3 {
   margin-bottom: 0.5rem;
 }
-.about{
+.about {
   padding: 2rem;
   max-width: 800px;
   margin: 0 auto;
@@ -100,7 +106,7 @@ h3{
 .contact-us {
   margin-top: 3rem;
 }
-.contact-us p{
+.contact-us p {
   font-size: 0.8rem;
   margin-bottom: 0.5rem;
   padding-left: 18px;
