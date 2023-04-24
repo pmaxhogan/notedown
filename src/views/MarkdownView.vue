@@ -269,179 +269,126 @@ function open(url) {
   <div class="markdown">
     <div class="left">
       <div class="newBtn">
-      <SplitButton
-        v-tooltip.bottom="{
-          value: `Select from Dropdown`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        :disabled="showEditableArea"
-        :model="newButtonItems"
-        icon="pi pi-plus"
-        label="New"
-        @click="newButtonItems[0].command"
-      ></SplitButton>
+        <SplitButton
+          v-tooltip.bottom="{
+            value: `Select from Dropdown`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          :disabled="showEditableArea"
+          :model="newButtonItems"
+          icon="pi pi-plus"
+          label="New"
+          @click="newButtonItems[0].command"
+        ></SplitButton>
 
-      <InputText
-        v-if="showFolderForm"
-        v-tooltip.bottom="{
-          value: `Enter name of folder to create`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        class="pi pi-folder"
-        type="text"
-        v-model="folderName"
-        placeholder="Untitled Folder"
-      ></InputText>
-      <Button
-        v-if="showFolderForm"
-        v-tooltip.bottom="{
-          value: `Create`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-plus"
-        @click="addFolder"
-      ></Button>
-    </div>
-    <div class="file-tree">
-      <Tree
-        :value="nodes"
-        class="w-full md:w-30rem"
-        selectionMode="single"
-        @nodeSelect="onNodeSelect"
-      >
-        <template #default="slotProps">
-          <span
-            v-tooltip.bottom="{
-              value: `Click to Edit Document`,
-              escape: true,
-              class: 'custom-message',
-            }"
-            >{{ slotProps.node.label }}</span
-          >
-          <Button
-            v-if="slotProps.node.currText"
-            v-tooltip.bottom="{
-              value: `\Preview`,
-              escape: true,
-              class: 'custom-message',
-            }"
-            class="p-button-rounded p-button-text p-button-plain"
-            icon="pi pi-eye"
-            @click="
-              () =>
-                open(
-                  '/viewdoc/' +
-                    useCurrentUser()?.value?.uid +
-                    '/' +
-                    slotProps.node.nodeId
-                )
-            "
-          ></Button>
-          <div v-if="!slotProps.node.docTag && slotProps.node.customParent">
-            <Button
+        <InputText
+          v-if="showFolderForm"
+          v-tooltip.bottom="{
+            value: `Enter name of folder to create`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          class="pi pi-folder"
+          type="text"
+          v-model="folderName"
+          placeholder="Untitled Folder"
+        ></InputText>
+        <Button
+          v-if="showFolderForm"
+          v-tooltip.bottom="{
+            value: `Create`,
+            escape: true,
+            class: 'custom-message',
+          }"
+          icon="pi pi-plus"
+          @click="addFolder"
+        ></Button>
+      </div>
+      <div class="file-tree">
+        <Tree
+          :value="nodes"
+          class="w-full md:w-30rem"
+          selectionMode="single"
+          @nodeSelect="onNodeSelect"
+        >
+          <template #default="slotProps">
+            <span
               v-tooltip.bottom="{
-                value: `Permanently Delete Folder`,
+                value: `Click to Edit Document`,
+                escape: true,
+                class: 'custom-message',
+              }"
+              >{{ slotProps.node.label }}</span
+            >
+            <Button
+              v-if="slotProps.node.currText"
+              v-tooltip.bottom="{
+                value: `\Preview`,
                 escape: true,
                 class: 'custom-message',
               }"
               class="p-button-rounded p-button-text p-button-plain"
-              icon="pi pi-trash"
-              @click="delFolder = true"
+              icon="pi pi-eye"
+              @click="
+                () =>
+                  open(
+                    '/viewdoc/' +
+                      useCurrentUser()?.value?.uid +
+                      '/' +
+                      slotProps.node.nodeId
+                  )
+              "
             ></Button>
-            <Button
-              v-tooltip.bottom="{
-                value: `Edit Folder Name`,
-                escape: true,
-                class: 'custom-message',
-              }"
-              class="p-button-rounded p-button-text p-button-plain"
-              icon="pi pi-pencil"
-              @click="showEditForm = true"
-            ></Button>
-            <InputText
-              v-if="showEditForm && selectedFolder === slotProps.node.nodeId"
-              v-tooltip.bottom="{
-                value: `Enter name of folder to rename`,
-                escape: true,
-                class: 'custom-message',
-              }"
-              class="pi pi-folder"
-              type="text"
-              v-model="folderName"
-              placeholder="Untitled Folder"
-            ></InputText>
-            <Button
-              v-if="showEditForm"
-              v-tooltip.bottom="{
-                value: `Rename`,
-                escape: true,
-                class: 'custom-message',
-              }"
-              icon="pi pi-pencil"
-              @click="editFolder = true"
-            ></Button>
-          </div>
-        </template>
-      </Tree>
+            <div v-if="!slotProps.node.docTag && slotProps.node.customParent">
+              <Button
+                v-tooltip.bottom="{
+                  value: `Permanently Delete Folder`,
+                  escape: true,
+                  class: 'custom-message',
+                }"
+                class="p-button-rounded p-button-text p-button-plain"
+                icon="pi pi-trash"
+                @click="delFolder = true"
+              ></Button>
+              <Button
+                v-tooltip.bottom="{
+                  value: `Edit Folder Name`,
+                  escape: true,
+                  class: 'custom-message',
+                }"
+                class="p-button-rounded p-button-text p-button-plain"
+                icon="pi pi-pencil"
+                @click="showEditForm = true"
+              ></Button>
+              <InputText
+                v-if="showEditForm && selectedFolder === slotProps.node.nodeId"
+                v-tooltip.bottom="{
+                  value: `Enter name of folder to rename`,
+                  escape: true,
+                  class: 'custom-message',
+                }"
+                class="pi pi-folder"
+                type="text"
+                v-model="folderName"
+                placeholder="Untitled Folder"
+              ></InputText>
+              <Button
+                v-if="showEditForm"
+                v-tooltip.bottom="{
+                  value: `Rename`,
+                  escape: true,
+                  class: 'custom-message',
+                }"
+                icon="pi pi-pencil"
+                @click="editFolder = true"
+              ></Button>
+            </div>
+          </template>
+        </Tree>
+      </div>
     </div>
-  </div>
     <div class="main-window">
-      <!--disable create new button if EditableDocument is open-->
-      <!-- <div class="newBtn">
-      <SplitButton
-        v-tooltip.bottom="{
-          value: `Select from Dropdown`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        :disabled="showEditableArea"
-        :model="newButtonItems"
-        icon="pi pi-plus"
-        label="New"
-        @click="newButtonItems[0].command"
-      ></SplitButton>
-      <Button
-        v-if="showEditableArea"
-        v-tooltip.bottom="{
-          value: `Close Document`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-times"
-        @click="
-          showEditableArea = false;
-          name = '';
-          text = '';
-          html = '';
-        "
-      ></Button>
-
-      <InputText
-        v-if="showFolderForm"
-        v-tooltip.bottom="{
-          value: `Enter name of folder to create`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        class="pi pi-folder"
-        type="text"
-        v-model="folderName"
-        placeholder="Untitled Folder"
-      ></InputText>
-      <Button
-        v-if="showFolderForm"
-        v-tooltip.bottom="{
-          value: `Create`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-plus"
-        @click="addFolder"
-      ></Button>
-    </div> -->
       <EditableDocument
         v-if="showEditableArea"
         :renderText="showHTML"
@@ -454,90 +401,91 @@ function open(url) {
       ></EditableDocument>
       <span v-if="showEditableArea" class="p-buttonset">
         <div class="close">
-          <Button 
-        v-if="showEditableArea"
-        v-tooltip.bottom="{
-          value: `Close Document`,
-          escape: true,
-          class: 'custom-message',
-        }"
-        icon="pi pi-times"
-        @click="
-          showEditableArea = false;
-          name = '';
-          text = '';
-          html = '';
-        "
-      ></Button>
+          <Button
+            v-if="showEditableArea"
+            v-tooltip.bottom="{
+              value: `Close Document`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            icon="pi pi-times"
+            @click="
+              showEditableArea = false;
+              name = '';
+              text = '';
+              html = '';
+            "
+          ></Button>
         </div>
         <div class="options">
-        <Button
-          v-tooltip.bottom="{
-            value: `Preview`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-eye"
-          @click="showHTML = !showHTML"
-        ></Button>
-        <Button
-          v-tooltip.bottom="{
-            value: `Select a Folder to Save as New`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          icon="pi pi-save"
-          @click="addToDatabase"
-        ></Button>
-        <Button
-          v-tooltip.bottom="{
-            value: `Save`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          :disabled="!currDocRef"
-          icon="pi pi-cloud-upload"
-          @click="updateInDatabase"
-        ></Button>
-        <Button
-          v-tooltip.bottom="{
-            value: `Delete`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          :disabled="!currDocRef"
-          icon="pi pi-trash"
-          @click="
-            showDeleteDialog = true;
-            deleteConfirmed = false;
-          "
-        ></Button>
-        <Button
-          v-tooltip.bottom="{
-            value: `Share`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          :disabled="!currDocRef"
-          icon="pi pi-link"
-          @click="
-            showShareDialog = true;
-            copyConfirmed = false;
-          "
-        ></Button>
-        <SplitButton class="download"
-          v-tooltip.bottom="{
-            value: `Download`,
-            escape: true,
-            class: 'custom-message',
-          }"
-          :model="downloadItems"
-          icon="pi pi-download"
-          @click="initiateDownload"
-        ></SplitButton>
+          <Button
+            v-tooltip.bottom="{
+              value: `Preview`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            icon="pi pi-eye"
+            @click="showHTML = !showHTML"
+          ></Button>
+          <Button
+            v-tooltip.bottom="{
+              value: `Select a Folder to Save as New`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            icon="pi pi-save"
+            @click="addToDatabase"
+          ></Button>
+          <Button
+            v-tooltip.bottom="{
+              value: `Save`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            :disabled="!currDocRef"
+            icon="pi pi-cloud-upload"
+            @click="updateInDatabase"
+          ></Button>
+          <Button
+            v-tooltip.bottom="{
+              value: `Delete`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            :disabled="!currDocRef"
+            icon="pi pi-trash"
+            @click="
+              showDeleteDialog = true;
+              deleteConfirmed = false;
+            "
+          ></Button>
+          <Button
+            v-tooltip.bottom="{
+              value: `Share`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            :disabled="!currDocRef"
+            icon="pi pi-link"
+            @click="
+              showShareDialog = true;
+              copyConfirmed = false;
+            "
+          ></Button>
+          <SplitButton
+            class="download"
+            v-tooltip.bottom="{
+              value: `Download`,
+              escape: true,
+              class: 'custom-message',
+            }"
+            :model="downloadItems"
+            icon="pi pi-download"
+            @click="initiateDownload"
+          ></SplitButton>
         </div>
       </span>
-    
+
       <Dialog position="center" v-model:visible="showDeleteDialog">
         <template #header>
           <h3 v-if="deleteConfirmed">Document Permanently Deleted.</h3>
@@ -655,23 +603,24 @@ textarea {
   justify-content: center;
   width: 100%;
   justify-content: space-between;
-
 }
-.newBtn{
+.newBtn {
   width: 100%;
   height: 45px;
   display: flex;
-  background-color:#322467;
+  background-color: #322467;
+
+  :disabled {
+    background-color: #5b5082;
+  }
 }
-.w-full{
+.w-full {
   border-radius: 0px 0px 5px 0px;
 }
-.close{
+.close {
   margin-left: 200px;
 }
-.options{
+.options {
   margin-right: 200px;
 }
-
-
 </style>
