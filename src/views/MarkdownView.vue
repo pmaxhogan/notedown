@@ -32,6 +32,8 @@ import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import awaitSignedIn from "@/lib/awaitSignedIn";
 
+await awaitSignedIn();
+
 const myToast = useToast();
 
 //toggle displays
@@ -65,7 +67,10 @@ const html = ref(""); //HTML rendered string
 const text = ref(""); //plaintext string
 const name = ref(""); //document name
 
-await awaitSignedIn();
+const currentFolderId = ref("default");
+const folderCounter = ref(0);
+const docCounter = ref(0);
+
 //reference to the docs subcollection
 const cRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/docs")
@@ -127,8 +132,7 @@ function addFolder() {
 
 //opens selected document in EditableDocument
 const onNodeSelect = (node) => {
-  const nodeRef = node.nodeId;
-  selectedFolder.value = nodeRef;
+  selectedFolder.value = node.nodeId;
   if (node.docTag) {
     console.log("selected document:", node);
     showEditableArea.value = false;
@@ -143,12 +147,12 @@ const onNodeSelect = (node) => {
       currDocRef.value = node.nodeId;
     }, 0);
   } else if (delFolder.value) {
-    deleteFolder(nodeRef);
+    deleteFolder(node.nodeId);
     --folderCounter.value;
     delFolder.value = false;
   } else if (editFolder.value) {
     showEditForm.value = false;
-    renameFolder(nodeRef, folderName.value);
+    renameFolder(node.nodeId, folderName.value);
     editFolder.value = false;
     selectedFolder.value = "";
   } else {
@@ -391,7 +395,7 @@ function open(url) {
     <div class="main-window">
       <EditableDocument
         v-if="showEditableArea"
-        :renderText="showHTML"
+        :renderText="false"
         :fileContent="text"
         :fileName="name"
         @html="(newHtml) => (html = newHtml)"
