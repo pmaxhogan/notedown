@@ -32,7 +32,7 @@ import Toast from "primevue/toast";
 import { useToast } from "primevue/usetoast";
 import awaitSignedIn from "@/lib/awaitSignedIn";
 
-const toast = useToast();
+const myToast = useToast();
 
 //toggle displays
 const showShareDialog = ref(false);
@@ -253,7 +253,7 @@ function copyToClipboard() {
   copyConfirmed.value = true;
 }
 const showError = () => {
-  toast.add({
+  myToast.add({
     severity: "error",
     summary: "Error",
     detail: "Content too long",
@@ -553,7 +553,7 @@ function open(url) {
           ></Button>
         </template>
       </Dialog>
-      <Toast ref="toast" />
+      <Toast />
     </div>
   </div>
 </template>
