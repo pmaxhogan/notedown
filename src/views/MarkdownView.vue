@@ -81,10 +81,6 @@ const fRef = useCollection(
   collection(db, "users/" + useCurrentUser()?.value?.uid + "/folders")
 );
 
-const currentFolderId = ref("default");
-const folderCounter = ref(0);
-const docCounter = ref(0);
-
 const nodes = computed(() => {
   const folderNodes = [
     {
