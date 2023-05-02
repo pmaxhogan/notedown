@@ -391,7 +391,7 @@ function open(url) {
     <div class="main-window">
       <EditableDocument
         v-if="showEditableArea"
-        :renderText="false"
+        :renderText="showHTML"
         :fileContent="text"
         :fileName="name"
         @html="(newHtml) => (html = newHtml)"
